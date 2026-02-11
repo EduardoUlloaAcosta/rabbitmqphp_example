@@ -12,7 +12,7 @@ Brian Patoilo 2/11/26 register started. May need to be revisited
  * May need to leave this here so if there are errors it's
  */
 
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/DB.php';
 
 function handleRegister($data) {
     if (empty($data['username']) || empty($data['password']) || empty($data['email'])) {
@@ -26,7 +26,7 @@ function handleRegister($data) {
         $db = getDB();
 
         //check username
-        $checkStmt = $db->prepare("SELECT id FROM users WHERE username = ?");
+        $checkStmt = $db->prepare("SELECT user_id FROM users WHERE username = ?");
         $checkStmt->bind_param("s", $data['username']);
         $checkStmt->execute();
         $checkResult = $checkStmt->get_result();
@@ -42,7 +42,7 @@ function handleRegister($data) {
         $checkStmt->close();
 
         // check email
-        $checkEmail = $db->prepare("SELECT id FROM users WHERE email = ?");
+        $checkEmail = $db->prepare("SELECT user_id FROM users WHERE email = ?");
         $checkEmail->bind_param("s", $data['email']);
         $checkEmail->execute();
         $emailResult = $checkEmail->get_result();

@@ -1,20 +1,24 @@
 <?php
 //written by Brian Patoilo 2/11/26
-require_once __DIR__ . 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/login.php';
+require_once __DIR__ . '/register.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 $connection = new AMQPStreamConnection(
 	'100.77.247.65',
 	5672,
 	'admin',
-	'123'
+	'123',
 	'/'
 );
 
 $channel = $connection->channel();
 
-$channel->queue_declare('db_queue', false, ture, false, false);
+$channel->queue_declare('db_queue', false, true, false, false);
 echo "Waiting for messages";
 
 $callback = function ($msg) {
