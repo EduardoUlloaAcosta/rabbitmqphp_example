@@ -22,7 +22,7 @@ function handleLogin($data) {
                 $response = [
                     'success' => true,
                     'message' => 'Login successful',
-                    'user_id' => $row['id'],
+                    'user_id' => $row['user_id'],
                     'username' => $row['username']
                 ];
             } else {

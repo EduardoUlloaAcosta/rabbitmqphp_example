@@ -4,7 +4,7 @@
 require_once __DIR__ . '/config.php';
 
 function getDB() {
-    $db = new mysql(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($db->connect_error) {
         throw new Exception("database not there idiot" . db->connect_error);
     }
