@@ -27,6 +27,7 @@ $response = sendRequest([
 if ($response['success']) {
     $_SESSION['user_id'] = $response['user_id'];
     $_SESSION['username'] = $response['username'];
+    $_SESSION['session_key'] = $response['session_key'];
 
     header('Location: search.php');
     exit;
