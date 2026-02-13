@@ -1,18 +1,31 @@
  <form action="login.php" method="POST">
-
-  <div class="container">
-    <label for="uname"><b>Username</b></label>
+  <link rel="stylesheet" href="stylesheet.css">
+  <div class="imgcontainer">
+    <img src="icon1.png" alt="Avatar" class="avatar">
+  </div>
+<head>
+  <h1>
+    Login Page
+  </h1>
+</head>
+  <div class="login-container">
+    <label for="username"><b>Username</b></label>
     <input type="text" placeholder="Enter Username" name="username" required>
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="password" required>
+    <input type="password" id="password" placeholder="Enter Password" name="password" required>
 
-    <button type="submit">Login</button>
+    <button type="submit" class="btn-login">Login</button>
     <label>
-      <input type="checkbox" checked="checked" name="remember"> Remember me
+      <input type="checkbox" class="checkbox" checked="checked" name="remember"> Remember me
     </label>
+
+
+  <div class="forgotpwd-container" style="background-color:#f1f1f1">
+    <button type="button" class="cancelbtn">Cancel</button>
+    <span class="psw">Forgot <a href="#">password?</a></span>
   </div>
-
-  <p>Don't have an account? <a href="registration.html">Register</a></p>
-
+   <p>Don't have an account? <a href="registration.html">Register</a></p>
 </form> 
+</html>
+
