@@ -19,11 +19,19 @@ function handleLogin($data) {
         $result = $stmt->get_result();
         if ($row = $result->fetch_assoc()) {
             if (password_verify($data['password'], $row['password'])) {
+                //adding code to generate a session key for future login's. it may
+                //or maynot work because i searched up a tutorial
+                $sessionKey = bin2hex(random_bytes(32));
+                $stmt2 = $db->prepare("INSERT INTO session_keys (user_id, session_key) VALUES (?, ?)");
+                $stmt2->bind_param("is", $row['user_id'], $sessionKey);
+                $stmt2->execute();
+                $stmt2->close();
                 $response = [
                     'success' => true,
                     'message' => 'Login successful',
                     'user_id' => $row['user_id'],
-                    'username' => $row['username']
+                    'username' => $row['username'],
+                    'session_key' => $sessionKey //added for the sessionkey requirment, BP
                 ];
             } else {
                 $response = [
