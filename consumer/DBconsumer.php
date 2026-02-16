@@ -9,7 +9,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 $connection = new AMQPStreamConnection(
-	'100.77.247.65',
+	'100.71.114.73',
 	5672,
 	'admin',
 	'123',
