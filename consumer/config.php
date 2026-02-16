@@ -1,6 +1,6 @@
 <?php
 //Brian Patoilo 2/11/26 Written to define things for project
-define('RABBITMQ_HOST', '100.77.247.65');   // <-- Change to your RabbitMQ VM's IP
+define('RABBITMQ_HOST', '100.71.114.73');   // <-- Change to your RabbitMQ VM's IP
 define('RABBITMQ_PORT', 5672);
 define('RABBITMQ_USER', 'admin');      // <-- Change to your RabbitMQ username
 define('RABBITMQ_PASS', '123');      // <-- Change to your RabbitMQ password
