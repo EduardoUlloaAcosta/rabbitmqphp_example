@@ -2,3 +2,4 @@ vendor/
 worker/.env
 .env
 *.env
+*.ini
