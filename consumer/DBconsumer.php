@@ -8,12 +8,13 @@ require_once __DIR__ . '/register.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
+//changed 2/22 to not be hard coded
 $connection = new AMQPStreamConnection(
-	'100.71.114.73',
-	5672,
-	'admin',
-	'123',
-	'/'
+    RABBITMQ_HOST,
+    RABBITMQ_PORT,
+    RABBITMQ_USER,
+    RABBITMQ_PASS,
+    RABBITMQ_VHOST
 );
 
 $channel = $connection->channel();
@@ -39,6 +40,9 @@ $callback = function ($msg) {
                 break;
             case 'register':
                 $response = handleRegister($data);
+                break;
+            case 'search_meal': //added 2/22 for meals php
+                $response = handleSearchMeal($data);
                 break;
 
             // add cases here when make more features
@@ -81,4 +85,4 @@ while ($channel->is_consuming()) {
 
 $channel->close();
 $connection->close();
-
+?>

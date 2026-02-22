@@ -1,16 +1,24 @@
 <?php
 //Brian Patoilo 2/11/26 Written to define things for project
-define('RABBITMQ_HOST', '100.71.114.73');   // <-- Change to your RabbitMQ VM's IP
+define('RABBITMQ_HOST', '100.71.114.73');
 define('RABBITMQ_PORT', 5672);
-define('RABBITMQ_USER', 'admin');      // <-- Change to your RabbitMQ username
-define('RABBITMQ_PASS', '123');      // <-- Change to your RabbitMQ password
+define('RABBITMQ_USER', 'admin');
+define('RABBITMQ_PASS', '123');
 define('RABBITMQ_VHOST', '/');
 
-// ─── Database Connection (local on this VM) ───
+//  database
+
 define('DB_HOST', 'localhost');
 define('DB_USER', 'testUser');
 define('DB_PASS', '123');
 define('DB_NAME', 'meal_planner');
-// ─── Queue Names ───
+// rabbitmq stuff
 define('QUEUE_NAME', 'db_queue');
+
+//DMZ stuff added 2/22 for api connection test
+define('DMZ_EXCHANGE', 'dmz_exchange');
+define('DMZ_EXCHANGE_TYPE', 'topic');
+define('DMZ_QUEUE', 'dmz_queue');
+define('DMZ_ROUTING_KEY', '*');
+
 ?>
