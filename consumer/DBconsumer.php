@@ -21,15 +21,7 @@ $channel = $connection->channel();
 $channel->queue_declare('db_queue', false, true, false, false);
 echo "Waiting for messages";
 
-$callback = function ($msg) {
-	$data = json_decode($msg->body, true);
-	echo " [x] Recieved: ", $msg->body, "\n";
-	$msg->ack();
-};
 
-while ($channel->is_consuming()) {
-	$channel->wait();
-}
 
 $callback = function ($msg) {
 	echo " [x] Recieved:" . $msg->body . "\n";
