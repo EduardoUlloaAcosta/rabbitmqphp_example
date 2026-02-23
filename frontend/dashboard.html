@@ -1,0 +1,41 @@
+
+<div class="headerMain">
+  <header>
+    <nav>
+      <div class="logo">
+        <a href="search.php">Cooking Crew</a>
+        <link rel="stylesheet" href="global.css" />
+        <link rel="stylesheet" href="dashboard.css" />
+      </div>
+      <ul class="nav-links">
+        <li><a href="search.php">Home</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="calorieTracker.html">Calorie Tracker</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="logout-btn">
+        <a href="logout.php">Logout</a>
+      </div>
+    </nav>
+  </header>
+</div>
+<div class="container">
+<h1>My Dashboard</h1>
+<input type="date" id="dashboard-date">
+<div class="grid">
+  <div class="box1">
+    <h2>Breakfast</h2>
+  </div>
+  <div class="box2">
+    <h2>Lunch</h2>
+  </div>
+  <div class="box3">
+    <h2>Dinner</h2>
+  </div>
+</div>
+<script>
+  const dateInput = document.getElementById('dashboard-date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+</script>
+</div>

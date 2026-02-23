@@ -1,55 +1,10 @@
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-/* header */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #1f3d36;
-  padding: 1rem 0;
-  box-shadow: 0 2px 5px #7ed6b4;
-  z-index: 1000;
-}
 
-body {
-  padding-top: 80px;
-}
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.logo a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
-.nav-links {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
-}
-
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.1rem;
-  transition: color 0.3s;
-}
-
-.nav-links a:hover {
-  color: #4caf50;
-}
 
 main {
   max-width: 1200px;
@@ -77,6 +32,7 @@ body {
   border-radius: 15px;
 }
 
+
 .avatar {
   width: 48px; 
   height: auto;
@@ -94,21 +50,6 @@ body {
   top: -20;
 }
 
-h1 {
-  text-align: center;
-  color: #2c2c2c;
-  margin-bottom: 30px;
-  font-size: 28px;
-  position: relative;
-  top: -30px;
-}
-
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #1f3d36;
-  font-weight: 500;
-}
 
 input {
   width: 100%;
@@ -118,19 +59,4 @@ input {
   font-size: 16px;
   transition: border-color 0.3s;
 
-}
-.logout-btn {
-  background: transparent;
-  color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.85);
 }

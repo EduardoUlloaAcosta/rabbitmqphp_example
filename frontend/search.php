@@ -13,6 +13,8 @@ if (!isset($_SESSION['user_id'])) {
         <nav>
             <div class="logo">
                 <a href="search.php">Cooking Crew</a>
+                <link rel="stylesheet" href="global.css" />
+                <link rel="stylesheet" href="searchstyle.css" />
             </div>
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
@@ -37,6 +39,6 @@ if (!isset($_SESSION['user_id'])) {
         <input
             type="text"
             placeholder="Search for meals (e.g, chicken, pasta, salad...." />
-        <link rel="stylesheet" href="searchstyle.css" />
+
     </div>
 </div>
