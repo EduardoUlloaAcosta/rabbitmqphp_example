@@ -1,4 +1,8 @@
 <?php
+require_once(__DIR__ . '/vendor/autoload.php'); // need for api key to read from .env
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 require_once(__DIR__ . '/../rabbitMQLib.inc');
 
 $ini = __DIR__ . '/dmzRabbitMQ.ini';
@@ -44,7 +48,7 @@ function handleRequest($request)
 
         $query = $request['query'] ?? "apple"; //apple is default
 
-        $fdcKey = getenv('USDA_FOODCHART_API_KEY');
+        $fdcKey = $_ENV['USDA_FOODCHART_API_KEY'];
 
         if (!$fdcKey){
             return ["status" => "error", "message" => "missing fdc api key"];
