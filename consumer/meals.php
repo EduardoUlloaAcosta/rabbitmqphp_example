@@ -84,6 +84,8 @@ function handleSearchMeal($data) {
             'query' => $name
         ]);
 
+        echo "fdc response: " . json_encode($fdcResponse) . "\n";
+
         if ($fdcResponse['status'] === 'success') {
             $calories = $fdcResponse['kcal'] ?? null;
             $fdcId = $fdcResponse['fdc_id'] ?? null;

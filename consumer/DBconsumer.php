@@ -4,6 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/login.php';
 require_once __DIR__ . '/register.php';
+require_once __DIR__ . '/meals.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
