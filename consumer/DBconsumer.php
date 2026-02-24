@@ -4,16 +4,18 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/login.php';
 require_once __DIR__ . '/register.php';
+require_once __DIR__ . '/meals.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
+//changed 2/22 to not be hard coded
 $connection = new AMQPStreamConnection(
-	'100.77.247.65',
-	5672,
-	'admin',
-	'123',
-	'/'
+    RABBITMQ_HOST,
+    RABBITMQ_PORT,
+    RABBITMQ_USER,
+    RABBITMQ_PASS,
+    RABBITMQ_VHOST
 );
 
 $channel = $connection->channel();
@@ -21,15 +23,7 @@ $channel = $connection->channel();
 $channel->queue_declare('db_queue', false, true, false, false);
 echo "Waiting for messages";
 
-$callback = function ($msg) {
-	$data = json_decode($msg->body, true);
-	echo " [x] Recieved: ", $msg->body, "\n";
-	$msg->ack();
-};
 
-while ($channel->is_consuming()) {
-	$channel->wait();
-}
 
 $callback = function ($msg) {
 	echo " [x] Recieved:" . $msg->body . "\n";
@@ -47,6 +41,9 @@ $callback = function ($msg) {
                 break;
             case 'register':
                 $response = handleRegister($data);
+                break;
+            case 'search_meal': //added 2/22 for meals php
+                $response = handleSearchMeal($data);
                 break;
 
             // add cases here when make more features
@@ -89,4 +86,4 @@ while ($channel->is_consuming()) {
 
 $channel->close();
 $connection->close();
-
+?>

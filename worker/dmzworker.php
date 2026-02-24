@@ -44,7 +44,7 @@ function handleRequest($request)
 
         $query = $request['query'] ?? "apple"; //apple is default
 
-        $fdcKey = "hUtLARhIj6b1fNtmw8SDYt0bwVU4L0y9vru9dqeM";
+        $fdcKey = getenv('USDA_FOODCHART_API_KEY');
 
         if (!$fdcKey){
             return ["status" => "error", "message" => "missing fdc api key"];
@@ -94,7 +94,8 @@ function handleRequest($request)
             "api" => "fdc",
             "query" => $query,
             "kcal" => $kcal,
-            "item" => $name
+            "item" => $name,
+            "fdc_id" => isset($food["fdcId"]) ? (string)$food["fdcId"] : null
         ];
 
     }
