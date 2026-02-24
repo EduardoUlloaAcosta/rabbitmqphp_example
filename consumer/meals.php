@@ -92,7 +92,6 @@ function handleSearchMeal($data) {
             echo " [!] FDC search failed for '$name', storing NULL calories\n";
         }
 
-        // Step 6: Insert into Meals table
         $stmt = $db->prepare(
             "INSERT INTO meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
              VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
