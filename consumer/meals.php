@@ -158,4 +158,29 @@ function buildIngredientString($meal) {
     }
     return implode(", ", $parts);
 }
+
+//2/23/2026
+//function added by ainesh, connects to DB and grabs name and image url of first 6 meals
+function handleGetMeals($data){
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error){
+        return ["success" => false, "message" => "Database connection failed: " . $db->connect_error];
+    }
+
+   $stmt = $db->prepare(
+       "SELECT name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
+);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meals = [];
+    while ($row = $result->fetch_assoc()){
+        $meals[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'meals' => $meals];
+}
 ?>
