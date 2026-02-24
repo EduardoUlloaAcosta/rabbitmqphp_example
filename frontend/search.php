@@ -40,3 +40,25 @@ if (!isset($_SESSION['user_id'])) {
         <link rel="stylesheet" href="searchstyle.css" />
     </div>
 </div>
+
+<!-- 2/23 added by ainesh -->
+
+<div class = "mealsGrid">
+  <?php
+  require_once __DIR__ . '/rabbitmq_helper.php';
+
+  $response = sendRequest(['type' => 'get_meals']);
+
+  if ($response && $response['success'] && !empty($response['meals'])){
+    foreach ($response['meals'] as $meal){
+      echo '<div class="mealCard">';
+      echo '<img src="' . htmlspecialchars($meal['image_url']) . '" alt "' . htmlspecialchars($meal['name']) . '">';
+      echo '<p>' . htmlspecialchars($meal['name']) . '</p>';
+      echo '</div>';
+    }
+  } else{
+    echo '<p>No meals found</p>';
+  }
+  ?>
+
+</div>

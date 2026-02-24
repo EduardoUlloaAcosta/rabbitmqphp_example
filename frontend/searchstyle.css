@@ -134,3 +134,39 @@ input {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.85);
 }
+
+/* added on 2/23 by ainesh, meal grid styles :)*/
+.mealsGrid {
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+  width: 100%
+}
+
+.mealCard {
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.mealCard.img{
+  width: 20%;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.mealCard p {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+body {
+  flex-direction: column;
+  align-items: center;
+}
