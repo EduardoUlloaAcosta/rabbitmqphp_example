@@ -10,16 +10,20 @@ use PhpAmqpLib\Message\AMQPMessage;
 function sendDmzRequest($data, $timeout = 15) {
     try {
         $connection = new AMQPStreamConnection(
-            DMZ_RABBITMQ_HOST,
-            DMZ_RABBITMQ_PORT,
-            DMZ_RABBITMQ_USER,
-            DMZ_RABBITMQ_PASS,
-            DMZ_RABBITMQ_VHOST
+            RABBITMQ_HOST,
+            RABBITMQ_PORT,
+            RABBITMQ_USER,
+            RABBITMQ_PASS,
+            RABBITMQ_VHOST
         );
         $channel = $connection->channel();
 
         $channel->exchange_declare(DMZ_EXCHANGE, DMZ_EXCHANGE_TYPE, false, true, false);
-        list($replyQueue, ,) = $channel->queue_declare("", false, false, true, false);
+
+        $replyQueueName= 'dmz_reply_' . uniqid();
+        $channel->queue_declare($replyQueueName, false, false, false, true);
+        $replyQueue = $replyQueueName; // fix permission issue with queues for dmz
+
         $replyRoutingKey = DMZ_ROUTING_KEY . ".response";
         $channel->queue_bind($replyQueue, DMZ_EXCHANGE, $replyRoutingKey);
         $channel->queue_declare(DMZ_QUEUE, false, true, false, false);

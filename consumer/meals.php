@@ -12,133 +12,34 @@ function handleSearchMeal($data) {
     if (empty($query)) {
         return ['success' => false, 'message' => 'No search query provided'];
     }
-    echo " [*] Searching meals for: $query\n";
+    echo " [*] Searching database for: $query\n";
 
-    // searching TheMealDB
-    $mealResponse = sendDmzRequest([
-        'type' => 'search_meal',
-        'query' => $query
-    ]);
-
-    if ($mealResponse['status'] !== 'success') {
-        return ['success' => false, 'message' => 'Failed to get meals from DMZ: ' . ($mealResponse['message'] ?? 'unknown error')];
-    }
-
-    $meals = $mealResponse['results']['meals'] ?? null;
-
-    if ($meals === null || empty($meals)) {
-        return ['success' => false, 'message' => 'No meals found for: ' . $query];
-    }
-
-    echo " [*] Got " . count($meals) . " meals from TheMealDB\n";
-
-    // Connect to the database to add meals
     $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($db->connect_error) {
         return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
     }
 
-    $insertedMeals = [];
+    $searchTerm = '%' . $query . '%';
+    $stmt = $db->prepare("SELECT id, api_id, name, category, area, image_url, calories FROM meals WHERE name LIKE ?");
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Loop for each meal and add into database
-    foreach ($meals as $meal) {
-        $apiId = $meal['idMeal'] ?? null;
-        $name = $meal['strMeal'] ?? 'Unknown';
-        $category = $meal['strCategory'] ?? null;
-        $area = $meal['strArea'] ?? null;
-        $instructions = $meal['strInstructions'] ?? null;
-        $imageUrl = $meal['strMealThumb'] ?? null;
-
-        // check if this meal already exists in our DB (by api_id)
-        $checkStmt = $db->prepare("SELECT id, calories FROM meals WHERE api_id = ?");
-        $checkStmt->bind_param("s", $apiId);
-        $checkStmt->execute();
-        $existingResult = $checkStmt->get_result();
-
-        if ($existingResult->num_rows > 0) {
-            // meal already in DB, just grab it and add to results
-            $existingMeal = $existingResult->fetch_assoc();
-            $insertedMeals[] = [
-                'id' => $existingMeal['id'],
-                'api_id' => $apiId,
-                'name' => $name,
-                'category' => $category,
-                'area' => $area,
-                'image_url' => $imageUrl,
-                'calories' => $existingMeal['calories'],
-                'already_existed' => true
-            ];
-            $checkStmt->close();
-            echo " [*] Meal '$name' already exists in DB, skipping insert\n";
-            continue;
-        }
-        $checkStmt->close();
-        // ingredients all one string
-        $ingredients = buildIngredientString($meal);
-
-        // to be worked on. Calorie from FDC call
-        $calories = null;
-        $fdcId = null;
-        $fdcResponse = sendDmzRequest([
-            'type' => 'fdc_search',
-            'query' => $name
-        ]);
-
-        echo "fdc response: " . json_encode($fdcResponse) . "\n";
-
-        if ($fdcResponse['status'] === 'success') {
-            $calories = $fdcResponse['kcal'] ?? null;
-            $fdcId = $fdcResponse['fdc_id'] ?? null;
-            echo " [*] Got calories for '$name': " . ($calories ?? "not found") . " kcal\n";
-        } else {
-            echo " [!] FDC search failed for '$name', storing NULL calories\n";
-        }
-
-        // Step 6: Insert into Meals table
-        $stmt = $db->prepare(
-            "INSERT INTO meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
-             VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-        $stmt->bind_param(
-            "ssssssssd",
-            $apiId,
-            $name,
-            $category,
-            $area,
-            $instructions,
-            $ingredients,
-            $imageUrl,
-            $fdcId,
-            $calories
-        );
-
-        if ($stmt->execute()) {
-            $newId = $stmt->insert_id;
-            $insertedMeals[] = [
-                'id' => $newId,
-                'api_id' => $apiId,
-                'name' => $name,
-                'category' => $category,
-                'area' => $area,
-                'image_url' => $imageUrl,
-                'calories' => $calories,
-                'already_existed' => false
-            ];
-            echo " [+] Inserted meal: $name (id: $newId)\n";
-        } else {
-            echo " [!] Failed to insert meal '$name': " . $stmt->error . "\n";
-        }
-        $stmt->close();
+    $meals = [];
+    while ($row = $result->fetch_assoc()) {
+        $meals[] = $row;
     }
-
+    $stmt->close();
     $db->close();
 
-    return [
-        'success' => true,
-        'message' => 'Found ' . count($insertedMeals) . ' meals',
-        'meals' => $insertedMeals
-    ];
+    if (empty($meals)) {
+        return ['success' => false, 'message' => 'No meals found for: ' . $query];
+    }
+
+    echo " [*] Found " . count($meals) . " meals in database\n";
+    return ['success' => true, 'meals' => $meals];
 }
+
 
 // function I looked up to make ingredients into one string in our database
 function buildIngredientString($meal) {
@@ -183,4 +84,136 @@ function handleGetMeals($data){
 
     return ['success' => true, 'meals' => $meals];
 }
+
+// 2/25/26 function to search meals by first letter for cronjob
+function handleSearchMealByLetter($data) {
+    $letter = $data['letter'] ?? '';
+    if (empty($letter)) {
+        return ['success' => false, 'message' => 'No letter provided'];
+    }
+    echo " [*] Searching meals by letter: $letter\n";
+
+    $mealResponse = sendDmzRequest([
+        'type' => 'search_meal_by_letter',
+        'letter' => $letter
+    ]);
+
+    if ($mealResponse['status'] !== 'success') {
+        return ['success' => false, 'message' => 'Failed to get meals from DMZ: ' . ($mealResponse['message'] ?? 'unknown error')];
+    }
+
+    $meals = $mealResponse['results']['meals'] ?? null;
+
+    if ($meals === null || empty($meals)) {
+        return ['success' => false, 'message' => 'No meals found for letter: ' . $letter];
+    }
+
+    echo "Got " . count($meals) . " meals for letter $letter\n";
+    return processAndInsertMeals($meals);
+}
+
+// process logic to add meals to database for the CRONJOB
+function processAndInsertMeals($meals) {
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
+    }
+
+    $insertedMeals = [];
+
+    foreach ($meals as $meal) {
+        $apiId = $meal['idMeal'] ?? null;
+        $name = $meal['strMeal'] ?? 'Unknown';
+        $category = $meal['strCategory'] ?? null;
+        $area = $meal['strArea'] ?? null;
+        $instructions = $meal['strInstructions'] ?? null;
+        $imageUrl = $meal['strMealThumb'] ?? null;
+
+        // check if this meal already exists in our DB
+        $checkStmt = $db->prepare("SELECT id, calories FROM meals WHERE api_id = ?");
+        $checkStmt->bind_param("s", $apiId);
+        $checkStmt->execute();
+        $existingResult = $checkStmt->get_result();
+
+        if ($existingResult->num_rows > 0) {
+            $existingMeal = $existingResult->fetch_assoc();
+            $insertedMeals[] = [
+                'id' => $existingMeal['id'],
+                'api_id' => $apiId,
+                'name' => $name,
+                'category' => $category,
+                'area' => $area,
+                'image_url' => $imageUrl,
+                'calories' => $existingMeal['calories'],
+                'already_existed' => true
+            ];
+            $checkStmt->close();
+            echo "Meal '$name' already exists in DB, skipping\n";
+            continue;
+        }
+        $checkStmt->close();
+
+        $ingredients = buildIngredientString($meal);
+
+        $calories = null;
+        $fdcId = null;
+        $fdcResponse = sendDmzRequest([
+            'type' => 'fdc_search',
+            'query' => $name
+        ]);
+
+        if ($fdcResponse['status'] === 'success') {
+            $calories = $fdcResponse['kcal'] ?? null;
+            $fdcId = $fdcResponse['fdc_id'] ?? null;
+            echo " Got calories for '$name': " . ($calories ?? "not found") . " kcal\n";
+        } else {
+            echo " FDC search failed for '$name', storing NULL calories\n";
+        }
+
+        $stmt = $db->prepare(
+            "INSERT INTO meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
+             VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+        $stmt->bind_param(
+            "ssssssssd",
+            $apiId,
+            $name,
+            $category,
+            $area,
+            $instructions,
+            $ingredients,
+            $imageUrl,
+            $fdcId,
+            $calories
+        );
+
+        if ($stmt->execute()) {
+            $newId = $stmt->insert_id;
+            $insertedMeals[] = [
+                'id' => $newId,
+                'api_id' => $apiId,
+                'name' => $name,
+                'category' => $category,
+                'area' => $area,
+                'image_url' => $imageUrl,
+                'calories' => $calories,
+                'already_existed' => false
+            ];
+            echo "Inserted meal: $name (id: $newId)\n";
+        } else {
+            echo "Failed to insert meal '$name': " . $stmt->error . "\n";
+        }
+        $stmt->close();
+    }
+
+    $db->close();
+
+    return [
+        'success' => true,
+        'message' => 'Found ' . count($insertedMeals) . ' meals',
+        'meals' => $insertedMeals
+    ];
+}
+
+
 ?>
