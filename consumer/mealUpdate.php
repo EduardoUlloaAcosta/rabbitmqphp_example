@@ -20,8 +20,8 @@ foreach ($letters as $letter) {
     echo "Searching letter: $letter";
 
     $request = [
-        'type' => 'search_meal',
-        'query' => $letter
+        'type' => 'search_meal_by_letter',
+        'letter' => $letter
     ];
 
     try {
