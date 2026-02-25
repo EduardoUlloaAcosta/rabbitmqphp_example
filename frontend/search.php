@@ -30,24 +30,35 @@ if (!isset($_SESSION['user_id'])) {
     </header>
 </div>
 
+<!-- edited by ainesh on 2/25 -->
 <div class="box">
     <h1>Search For Meals</h1>
-
-    <div class="searchBox">
-        <input
-            type="text"
-            placeholder="Search for meals (e.g, chicken, pasta, salad...." />
-        <link rel="stylesheet" href="searchstyle.css" />
-    </div>
+    <form method="GET" action="search.php">
+    <input
+        type="text"
+        name="query"
+        placeholder="Search for meals (e.g. chicken, salad, pasta...)"
+        value="<?php echo htmlspecialchars($_GET['query'] ?? ''); ?>"
+        />
+        <button type="submit">Search</button>
+    </form>
+    <link rel="stylesheet" href="searchstyle.css" />
 </div>
 
-<!-- 2/23 added by ainesh -->
+
+<!-- 2/23 added by ainesh, changed on 2/25 by ainesh -->
 
 <div class = "mealsGrid">
   <?php
   require_once __DIR__ . '/rabbitmq_helper.php';
 
-  $response = sendRequest(['type' => 'get_meals']);
+    $query = $_GET['query'] ?? '';
+
+    if(!empty($query)){
+        $response = sendRequest(['type' => 'search_meal', 'query' => $query]);
+    } else {
+        $response = sendRequest(['type' => 'get_meals']);
+    }
 
   if ($response && $response['success'] && !empty($response['meals'])){
     foreach ($response['meals'] as $meal){
