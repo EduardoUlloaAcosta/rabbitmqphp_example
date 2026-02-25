@@ -45,9 +45,10 @@ $callback = function ($msg) {
             case 'search_meal': //added 2/22 for meals php
                 $response = handleSearchMeal($data);
                 break;
-            case 'get_meals': //added 2/23 by ainesh for handleGetMeals function
+			case 'get_meals': //added 2/23 by ainesh for handleGetMeals function
                 $response = handleGetMeals($data);
                 break;
+
             // add cases here when make more features
 			//example cases
             // case 'get_profile':

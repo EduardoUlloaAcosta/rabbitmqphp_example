@@ -1,5 +1,6 @@
 <?php
-// test file for the meal search
+//Brian Patoilo 2/23/26
+
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
@@ -7,64 +8,63 @@ require_once __DIR__ . '/config.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-$query = $argv[1] ?? "chicken"; // pass a search term as argument, defaults to chicken
+$connection = new AMQPStreamConnection(
+    RABBITMQ_HOST, RABBITMQ_PORT,
+    RABBITMQ_USER, RABBITMQ_PASS, RABBITMQ_VHOST
+);
+$channel = $connection->channel();
 
-echo "Searching for: $query\n";
-echo "Sending request to DB consumer...\n\n";
+// Create a temporary reply queue
+list($replyQueue, ,) = $channel->queue_declare("", false, false, true, false);
 
-$request = [
-    'type' => 'search_meal',
-    'query' => $query
-];
+$correlationId = uniqid();
+$response = null;
 
-try {
-    $connection = new AMQPStreamConnection(
-        RABBITMQ_HOST,
-        RABBITMQ_PORT,
-        RABBITMQ_USER,
-        RABBITMQ_PASS,
-        RABBITMQ_VHOST
-    );
-    $channel = $connection->channel();
-
-    // create temp reply queue
-    list($replyQueue, ,) = $channel->queue_declare("", false, false, true, false);
-
-    $response = null;
-    $correlationId = uniqid('test_', true);
-
-    $channel->basic_consume($replyQueue, '', false, true, false, false,
-        function ($msg) use (&$response, $correlationId) {
-            if ($msg->get('correlation_id') == $correlationId) {
-                $response = json_decode($msg->body, true);
-            }
+// Listen for the reply
+$channel->basic_consume($replyQueue, '', false, true, false, false,
+    function ($msg) use (&$response, $correlationId) {
+        if ($msg->get('correlation_id') == $correlationId) {
+            $response = json_decode($msg->body, true);
         }
-    );
-
-    $msg = new AMQPMessage(json_encode($request), [
-        'correlation_id' => $correlationId,
-        'reply_to' => $replyQueue
-    ]);
-
-    $channel->basic_publish($msg, '', QUEUE_NAME);
-    echo "Request sent. Waiting for response...\n";
-
-    $waitUntil = time() + 120;
-    while ($response === null && time() < $waitUntil) {
-        $channel->wait(null, false, 120);
     }
+);
 
-    $channel->close();
-    $connection->close();
+// Pick what you want to test:
+// Test login
+$testMessage = json_encode([
+    'type' => 'login',
+    'username' => 'testuser2',
+    'password' => 'testpass123',
+]);
 
-    if ($response === null) {
-        echo "ERROR: No response received (timed out)\n";
-    } else {
-        echo "\n=== RESPONSE ===\n";
-        echo json_encode($response, JSON_PRETTY_PRINT) . "\n";
-    }
+// To test login instead, comment out the above and uncomment this:
+// $testMessage = json_encode([
+//     'type' => 'login',
+//     'username' => 'testuser',
+//     'password' => 'testpass123'
+// ]);
 
-} catch (Exception $e) {
-    echo "ERROR: " . $e->getMessage() . "\n";
+$msg = new AMQPMessage($testMessage, [
+    'correlation_id' => $correlationId,
+    'reply_to' => $replyQueue
+]);
+
+$channel->basic_publish($msg, '', QUEUE_NAME);
+echo " [x] Sent: $testMessage\n";
+echo " [x] Waiting for response...\n";
+
+// Wait up to 5 seconds for a reply
+$timeout = time() + 5;
+while ($response === null && time() < $timeout) {
+    $channel->wait(null, false, 5);
 }
-?>
+
+if ($response) {
+    echo " [x] Got response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";
+} else {
+    echo " [!] No response received (timeout)\n";
+}
+
+$channel->close();
+$connection->close();
+
