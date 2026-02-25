@@ -84,6 +84,8 @@ function handleSearchMeal($data) {
             'query' => $name
         ]);
 
+        echo "fdc response: " . json_encode($fdcResponse) . "\n";
+
         if ($fdcResponse['status'] === 'success') {
             $calories = $fdcResponse['kcal'] ?? null;
             $fdcId = $fdcResponse['fdc_id'] ?? null;
@@ -92,6 +94,7 @@ function handleSearchMeal($data) {
             echo " [!] FDC search failed for '$name', storing NULL calories\n";
         }
 
+        // Step 6: Insert into Meals table
         $stmt = $db->prepare(
             "INSERT INTO meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
              VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -154,5 +157,30 @@ function buildIngredientString($meal) {
         }
     }
     return implode(", ", $parts);
+}
+
+//2/23/2026
+//function added by ainesh, connects to DB and grabs name and image url of first 6 meals
+function handleGetMeals($data){
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error){
+        return ["success" => false, "message" => "Database connection failed: " . $db->connect_error];
+    }
+
+   $stmt = $db->prepare(
+       "SELECT name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
+);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meals = [];
+    while ($row = $result->fetch_assoc()){
+        $meals[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'meals' => $meals];
 }
 ?>
