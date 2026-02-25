@@ -45,12 +45,41 @@
         align-items: center;
         justify-content: center;
     }
+
+     /* progress is gonna get changes out cuz 
+    gonna need to make a variable 
+    that will work out the calulation for it */
+    .progress-bar {
+      --progress: 65; 
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 28px;
+      margin: 100px auto;  
+      background:
+        radial-gradient(closest-side, white 78%, transparent 80% 100%),
+        conic-gradient(
+          rgb(116, 198, 0) calc(var(--progress) * 1%),
+          #e6e6e6 0
+        );
+    }
+
+    .progress-bar small {
+      font-size: 16px;
+      font-weight: normal;
+      margin-top: 5px;
+    }
 </style>
 
 </head>
 
 <body>
-
+<!-- Eduardo's Header design remember in case of new page-->
 <div class="headerMain">
     <header>
         <nav>
@@ -75,12 +104,22 @@
     <div class="small-box">
         <input type="text" placeholder="Calorie Goal: ">
     </div>
+    
 
     <div class="small-box">
         <p>Progress (will have data)</p>
     </div>
 
+<div class="progress-bar">
+      1300
+      <small>/ 2000 kcal</small>
+    </div>
+
+
+
+
 </div>
+
 
 </body>
 </html>
