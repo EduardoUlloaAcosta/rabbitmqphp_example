@@ -4,6 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/login.php';
 require_once __DIR__ . '/register.php';
+require_once __DIR__ . '/meals.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -43,6 +44,9 @@ $callback = function ($msg) {
                 break;
             case 'search_meal': //added 2/22 for meals php
                 $response = handleSearchMeal($data);
+                break;
+			case 'get_meals': //added 2/23 by ainesh for handleGetMeals function
+                $response = handleGetMeals($data);
                 break;
 
             // add cases here when make more features
