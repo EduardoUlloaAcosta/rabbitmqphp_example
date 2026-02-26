@@ -69,7 +69,7 @@ function handleGetMeals($data){
     }
 
    $stmt = $db->prepare(
-       "SELECT name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
+       "SELECT id, name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
 );
     $stmt->execute();
     $result = $stmt->get_result();
@@ -215,5 +215,95 @@ function processAndInsertMeals($meals) {
     ];
 }
 
+//added on 2/25/26 by ainesh, get single meal by ID for meals details page
+function handleGetMealById($data){
+    $id = $data['id'] ?? null;
+    if(!$id){
+        return ['success' => false, 'message' => 'no meal id given'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare("SELECT id, name, category, area, instructions, ingredients, image_url, calories FROM meals WHERE id = ?");
+    $stmt->bind_param("i",$id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $meal = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    if (!$meal){
+        return ['success' => false, 'message' => "meal not found"];
+    }
+
+    return ['success' => true, 'meal' => $meal];
+}
+
+//added on 2/25/26 by ainesh, gets reviews for a meal
+function handleGetReviews($data){
+    $meal_id = $data['meal_id'] ?? null;
+    if (!$meal_id){
+        return ['success' => false, 'message' => 'no meal id given' ];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare("SELECT r.id, r.rating, r.review_text, r.created_at, u.username FROM reviews r JOIN users u ON r.user_id = u.user_id WHERE r.meal_id = ? ORDER BY r.created_at DESC");
+    $stmt->bind_param("i", $meal_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $reviews = [];
+    while ($row = $result->fetch_assoc()){
+        $reviews[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'reviews' => $reviews];
+}
+
+//added on 2/25/26 by ainesh, handles posting a review
+function handlePostReview($data){
+    $meal_id = $data['meal_id'] ?? null;
+    $user_id = $data['user_id'] ?? null;
+    $rating = $data['rating'] ?? null;
+    $review_text = $data['review_text'] ?? '';
+
+    if (!$meal_id || !$user_id || !$rating){
+        return ['success' => false, 'message' => 'missing required fields'];
+    }
+
+    if ($rating < 1 || $rating > 5){
+        return ['success' => false, 'message' => 'rating has to be between 1 and 5'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+        }
+
+        $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text) VALUES(?, ?, ?, ?)");
+        $stmt->bind_param("iiis", $user_id, $meal_id, $rating, $review_text);
+
+        if($stmt->execute()){
+            $stmt->close();
+            $db->close();
+            return ['success' => true, 'message' => 'review posted! :)'];
+        } else {
+            $stmt->close();
+            $db->close();
+            return  ['success' => false, 'message' => 'failed to post review :c'];
+        }
+
+}
 
 ?>

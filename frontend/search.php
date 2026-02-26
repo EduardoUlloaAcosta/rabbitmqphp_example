@@ -63,8 +63,10 @@ if (!isset($_SESSION['user_id'])) {
   if ($response && $response['success'] && !empty($response['meals'])){
     foreach ($response['meals'] as $meal){
       echo '<div class="mealCard">';
+      echo '<a href="mealDetails.php?id=' . $meal['id'] . '">';
       echo '<img src="' . htmlspecialchars($meal['image_url']) . '" alt "' . htmlspecialchars($meal['name']) . '">';
       echo '<p>' . htmlspecialchars($meal['name']) . '</p>';
+      echo '</a>';
       echo '</div>';
     }
   } else{
