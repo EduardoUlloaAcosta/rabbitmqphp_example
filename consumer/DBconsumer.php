@@ -48,6 +48,18 @@ $callback = function ($msg) {
 			case 'get_meals': //added 2/23 by ainesh for handleGetMeals function
                 $response = handleGetMeals($data);
                 break;
+            case 'search_meal_by_letter': //add case to allow cronjob to run for all letters
+                $response = handleSearchMealByLetter($data);
+                break;
+            case 'get_meal_by_id': //added 2/25 by ainesh for grabbing meal by id
+                $response = handleGetMealById($data);
+                break;
+            case 'get_reviews': //added 2/25 by ainesh for grabbing reviews
+                $response = handleGetReviews($data);
+                break;
+            case 'post_review': //added 2/25 by ainesh for posting reviews
+                $response = handlePostReview($data);
+                break;
 
             // add cases here when make more features
 			//example cases
