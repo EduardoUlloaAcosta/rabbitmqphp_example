@@ -1,5 +1,7 @@
 <?php
-// test_send.php - Quick test script
+//Brian Patoilo 2/23/26
+
+
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
