@@ -60,6 +60,16 @@ $callback = function ($msg) {
             case 'post_review': //added 2/25 by ainesh for posting reviews
                 $response = handlePostReview($data);
                 break;
+            case 'add_to_dashboard': //added by Brian for dashboard logic
+                $response = handleAddToDashboard($data);
+                break;
+            case 'get_dashboard':
+                $response = handleGetDashboard($data);
+                break;
+            case 'remove_from_dashboard':
+                $response = handleRemoveFromDashboard($data);
+                break;
+
 
             // add cases here when make more features
 			//example cases
