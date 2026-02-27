@@ -1,0 +1,68 @@
+h1{
+
+text-align: center;
+  width: 100%;
+  display: block;
+  margin-bottom: 20px;
+}
+/* DASHBOARD CSS */
+.box1 ,.box2, .box3{
+  height: 400px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 15px;
+  padding: 20px;
+}
+h2{
+    text-align: center;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 20px;
+}
+
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(45deg, #f8fffb 0%, #bdf7d6 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* add this */
+  align-items: center;
+  padding: 20px;
+}
+#dashboard-date {
+  font-size: 1.2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333;
+  background-color: white;
+  border: 2px solid #306045;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 8px 16px;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+#dashboard-date:hover {
+  border-color: #5fb082;
+}
+.container {
+  background-color: white;
+  border-radius: 15px;
+  border: 2px solid #68c28f;
+  padding: 30px;
+  width: 90%;
+  max-width: 1200px;
+}
+.dashboard-meal img {
+    width: 250px;
+    height: 250px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
