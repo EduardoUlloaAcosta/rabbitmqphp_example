@@ -1,5 +1,6 @@
 <?php
 //mealDetails page created by ainesh 2/25/2026
+//updated by Brian Patoilo 2/26 for better display, dashboard, and ingredients
 session_start();
 if(!isset($_SESSION['user_id'])){
     header('Location: index.html?error=' . urlencode ('how did you even arrive here twin.'));
@@ -19,6 +20,24 @@ $meal = $mealResponse['meal'] ?? null;
 
 $reviewsResponse = sendRequest(['type' => 'get_reviews', 'meal_id' => $meal_id]);
 $reviews = $reviewsResponse['reviews'] ?? [];
+
+$dashboardMsg = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) {
+    $dashResponse = sendRequest([
+        'type' => 'add_to_dashboard',
+        'user_id' => $_SESSION['user_id'],
+        'meal_id' => $meal_id,
+        'meal_type' => $_POST['meal_type'],
+        'plan_date' => date('Y-m-d')
+    ]);
+    if ($dashResponse['success']) {
+        header('Location: dashboard.php');
+        exit;
+    } else {
+        $dashboardMsg = '<p class="error-msg">' . htmlspecialchars($dashResponse['message']) . '</p>';
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,12 +52,11 @@ $reviews = $reviewsResponse['reviews'] ?? [];
             <div class="logo">
                 <a href="search.php">Cooking Crew</a>
             </div>
-<!-- note: profile, calorieTracker, and dashboard DO NOT exist yet at this current moment. they are simply placeholders. -->
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="calorieTracker.html">Calorie Tracker</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
@@ -47,16 +65,55 @@ $reviews = $reviewsResponse['reviews'] ?? [];
     </header>
 </div>
 
-<?php if ($meal): ?>
+<?php if ($meal): ?> <!-- added ability to add to dash and ingredients displays-->
 <div class="mealDetail">
     <img src="<?= htmlspecialchars($meal['image_url']) ?>" alt="<?= htmlspecialchars($meal['name']) ?>">
     <h1><?= htmlspecialchars($meal['name']) ?></h1>
     <p><strong>Category:</strong> <?= htmlspecialchars($meal['category'] ?? 'N/A') ?></p>
     <p><strong>Area:</strong> <?= htmlspecialchars($meal['area'] ?? 'N/A') ?></p>
-    <p><strong>Calories:</strong> <?= htmlspecialchars($meal['calories'] ?? 'N/A') ?></p>
+    <p><strong>Calories:</strong> <?= isset($meal['calories']) && $meal['calories'] !== null ? round($meal['calories']) . ' kcal' : 'N/A' ?></p>
+
+    <h2>Ingredients</h2>
+    <?php if (!empty($meal['ingredients'])): ?>
+        <ul class="ingredients-list">
+            <?php
+            $ingredients = explode(', ', $meal['ingredients']);
+            foreach ($ingredients as $ing):
+                $ing = trim($ing);
+                if ($ing !== ''):
+            ?>
+                <li><?= htmlspecialchars($ing) ?></li>
+            <?php
+                endif;
+            endforeach;
+            ?>
+        </ul>
+    <?php else: ?>
+        <p>No ingredients listed.</p>
+    <?php endif; ?>
+
     <h2>Instructions</h2>
     <p><?= nl2br(htmlspecialchars($meal['instructions'] ?? '')) ?></p>
+
+    <!-- add to dash logic Brian Patoilo -->
+    <div class="add-to-dashboard">
+        <h2>Add to Today's Dashboard</h2>
+        <?= $dashboardMsg ?>
+        <form method="POST">
+            <input type="hidden" name="add_to_dashboard" value="1">
+            <label>Meal Type:
+                <select name="meal_type" required>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                </select>
+            </label>
+            <button type="submit">Add to Dashboard</button>
+        </form>
+    </div>
 </div>
+
+
 
 <div class="reviewSection">
     <h2>Reviews</h2>
@@ -71,7 +128,7 @@ $reviews = $reviewsResponse['reviews'] ?? [];
                 <option>5</option>
             </select>
         </label>
-        <textarea name="review_text" placeholder="Write your review..."></textarea>
+        <textarea name="review_text" placeholder="Yay or Nay?"></textarea>
         <button type="submit">Submit Review</button>
     </form>
 

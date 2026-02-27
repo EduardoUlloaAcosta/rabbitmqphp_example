@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
                 <li><a href="search.php">Home</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="calorieTracker.html">Calorie Tracker</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
 
             </ul>
             <div class="logout-btn">
