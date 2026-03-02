@@ -4,16 +4,18 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/login.php';
 require_once __DIR__ . '/register.php';
+require_once __DIR__ . '/meals.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
+//changed 2/22 to not be hard coded
 $connection = new AMQPStreamConnection(
-	'100.71.114.73',
-	5672,
-	'admin',
-	'123',
-	'/'
+    RABBITMQ_HOST,
+    RABBITMQ_PORT,
+    RABBITMQ_USER,
+    RABBITMQ_PASS,
+    RABBITMQ_VHOST
 );
 
 $channel = $connection->channel();
@@ -21,15 +23,7 @@ $channel = $connection->channel();
 $channel->queue_declare('db_queue', false, true, false, false);
 echo "Waiting for messages";
 
-$callback = function ($msg) {
-	$data = json_decode($msg->body, true);
-	echo " [x] Recieved: ", $msg->body, "\n";
-	$msg->ack();
-};
 
-while ($channel->is_consuming()) {
-	$channel->wait();
-}
 
 $callback = function ($msg) {
 	echo " [x] Recieved:" . $msg->body . "\n";
@@ -48,6 +42,34 @@ $callback = function ($msg) {
             case 'register':
                 $response = handleRegister($data);
                 break;
+            case 'search_meal': //added 2/22 for meals php
+                $response = handleSearchMeal($data);
+                break;
+			case 'get_meals': //added 2/23 by ainesh for handleGetMeals function
+                $response = handleGetMeals($data);
+                break;
+            case 'search_meal_by_letter': //add case to allow cronjob to run for all letters
+                $response = handleSearchMealByLetter($data);
+                break;
+            case 'get_meal_by_id': //added 2/25 by ainesh for grabbing meal by id
+                $response = handleGetMealById($data);
+                break;
+            case 'get_reviews': //added 2/25 by ainesh for grabbing reviews
+                $response = handleGetReviews($data);
+                break;
+            case 'post_review': //added 2/25 by ainesh for posting reviews
+                $response = handlePostReview($data);
+                break;
+            case 'add_to_dashboard': //added by Brian for dashboard logic
+                $response = handleAddToDashboard($data);
+                break;
+            case 'get_dashboard':
+                $response = handleGetDashboard($data);
+                break;
+            case 'remove_from_dashboard':
+                $response = handleRemoveFromDashboard($data);
+                break;
+
 
             // add cases here when make more features
 			//example cases
@@ -89,4 +111,4 @@ while ($channel->is_consuming()) {
 
 $channel->close();
 $connection->close();
-
+?>

@@ -60,3 +60,119 @@ input {
   transition: border-color 0.3s;
 
 }
+.logout-btn {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+/* added on 2/23 by ainesh, meal grid styles :)*/
+.mealsGrid {
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+  width: 100%
+}
+
+.mealCard {
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.mealCard img{
+  width: 100%;
+  max-width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.mealCard p {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+body {
+  flex-direction: column;
+  align-items: center;
+}
+
+/* added by Brian on 2/26 for better looks*/
+.mealDetail {
+  max-width: 700px;
+  margin: 20px auto;
+  text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+}
+
+.mealDetail img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.mealDetail h1, .mealDetail h2 {
+  position: static;
+}
+
+.mealDetail p {
+  margin-bottom: 10px;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.ingredients-list li {
+  padding: 4px 0;
+}
+
+.add-to-dashboard {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.reviewSection {
+  max-width: 700px;
+  margin: 20px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.success-msg {
+  color: #2a6b4a;
+  margin-bottom: 10px;
+}
+
+.error-msg {
+  color: #cc5555;
+  margin-bottom: 10px;
+}
+

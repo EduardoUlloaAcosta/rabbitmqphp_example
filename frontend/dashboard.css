@@ -59,3 +59,10 @@ body {
   width: 90%;
   max-width: 1200px;
 }
+.dashboard-meal img {
+    width: 250px;
+    height: 250px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
