@@ -133,6 +133,7 @@ input {
 .logout-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.85);
+<<<<<<< HEAD
 }
 
 /* added on 2/23 by ainesh, meal grid styles :)*/
@@ -170,3 +171,6 @@ body {
   flex-direction: column;
   align-items: center;
 }
+=======
+}
+>>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)

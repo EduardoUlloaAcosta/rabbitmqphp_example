@@ -24,6 +24,14 @@ if (!isset($_SESSION['user_id'])) {
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
+<<<<<<< HEAD
+=======
+
+        </nav>
+
+    </header>
+</div>
+>>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)
 
         </nav>
 
@@ -33,6 +41,7 @@ if (!isset($_SESSION['user_id'])) {
 <!-- edited by ainesh on 2/25 -->
 <div class="box">
     <h1>Search For Meals</h1>
+<<<<<<< HEAD
     <form method="GET" action="search.php">
     <input
         type="text"
@@ -73,3 +82,13 @@ if (!isset($_SESSION['user_id'])) {
   ?>
 
 </div>
+=======
+
+    <div class="searchBox">
+        <input
+            type="text"
+            placeholder="Search for meals (e.g, chicken, pasta, salad...." />
+        <link rel="stylesheet" href="searchstyle.css" />
+    </div>
+</div>
+>>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)
