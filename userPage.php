@@ -1,3 +1,15 @@
+
+<?php
+
+
+// php stuff will go here
+
+
+
+
+?>
+
+<!DOCTYPE html>
 <html>
 
 <head>
