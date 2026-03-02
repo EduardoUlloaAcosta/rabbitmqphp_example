@@ -1,7 +1,8 @@
 <?php
-// Brian Patoilo, 2/22/26. Handles meal searches.
+// Brian Patoilo, 2/5/26 Handles meal searches.
 // I needed help trying to understand the logic so I looked up a lot for these functions so if somethings wrong just ignore it.
 // It calls the DMZ for API data, parses it, and inserts into Meals table
+// Brian patoilo on 2/26/26. This has become our controller file that all the functions live in for the meal information. Maybe to be split up later but for now it all lives here.
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/dmz_client.php';
@@ -69,7 +70,7 @@ function handleGetMeals($data){
     }
 
    $stmt = $db->prepare(
-       "SELECT name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
+       "SELECT id, name, image_url FROM meals ORDER BY name ASC LIMIT 6" //alphabetical order
 );
     $stmt->execute();
     $result = $stmt->get_result();
@@ -214,6 +215,222 @@ function processAndInsertMeals($meals) {
         'meals' => $insertedMeals
     ];
 }
+
+//added on 2/25/26 by ainesh, get single meal by ID for meals details page
+function handleGetMealById($data){
+    $id = $data['id'] ?? null;
+    if(!$id){
+        return ['success' => false, 'message' => 'no meal id given'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare("SELECT id, name, category, area, instructions, ingredients, image_url, calories FROM meals WHERE id = ?");
+    $stmt->bind_param("i",$id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $meal = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    if (!$meal){
+        return ['success' => false, 'message' => "meal not found"];
+    }
+
+    return ['success' => true, 'meal' => $meal];
+}
+
+//added on 2/25/26 by ainesh, gets reviews for a meal
+function handleGetReviews($data){
+    $meal_id = $data['meal_id'] ?? null;
+    if (!$meal_id){
+        return ['success' => false, 'message' => 'no meal id given' ];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare("SELECT r.id, r.rating, r.review_text, r.created_at, u.username FROM reviews r JOIN users u ON r.user_id = u.user_id WHERE r.meal_id = ? ORDER BY r.created_at DESC");
+    $stmt->bind_param("i", $meal_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $reviews = [];
+    while ($row = $result->fetch_assoc()){
+        $reviews[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'reviews' => $reviews];
+}
+
+//added on 2/25/26 by ainesh, handles posting a review
+function handlePostReview($data){
+    $meal_id = $data['meal_id'] ?? null;
+    $user_id = $data['user_id'] ?? null;
+    $rating = $data['rating'] ?? null;
+    $review_text = $data['review_text'] ?? '';
+
+    if (!$meal_id || !$user_id || !$rating){
+        return ['success' => false, 'message' => 'missing required fields'];
+    }
+
+    if ($rating < 1 || $rating > 5){
+        return ['success' => false, 'message' => 'rating has to be between 1 and 5'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if($db->connect_error){
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+        }
+
+        $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text) VALUES(?, ?, ?, ?)");
+        $stmt->bind_param("iiis", $user_id, $meal_id, $rating, $review_text);
+
+        if($stmt->execute()){
+            $stmt->close();
+            $db->close();
+            return ['success' => true, 'message' => 'review posted! :)'];
+        } else {
+            $stmt->close();
+            $db->close();
+            return  ['success' => false, 'message' => 'failed to post review :c'];
+        }
+
+}
+
+function handleAddToDashboard($data) { //function to add meals to use dashboard Brian Patoilo
+    $user_id = $data['user_id'] ?? null;
+    $meal_id = $data['meal_id'] ?? null;
+    $meal_type = $data['meal_type'] ?? null;
+    $plan_date = $data['plan_date'] ?? null;
+
+    if (!$user_id || !$meal_id || !$meal_type || !$plan_date) {
+        return ['success' => false, 'message' => 'missing required fields'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    //creates daily plan for user
+    $stmt = $db->prepare("SELECT id FROM daily_plans WHERE user_id = ? AND plan_date = ?");
+    $stmt->bind_param("is", $user_id, $plan_date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $daily_plan_id = $row['id'];
+    } else {
+        $stmt->close();
+        $stmt = $db->prepare("INSERT INTO daily_plans (user_id, plan_date) VALUES (?, ?)");
+        $stmt->bind_param("is", $user_id, $plan_date);
+        $stmt->execute();
+        $daily_plan_id = $stmt->insert_id;
+    }
+    $stmt->close();
+
+    // add the meal to the daily plan
+    $stmt = $db->prepare("INSERT INTO daily_plan_meals (daily_plan_id, meal_id, meal_type) VALUES (?, ?, ?)");
+    $stmt->bind_param("iis", $daily_plan_id, $meal_id, $meal_type);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $db->close();
+        return ['success' => true, 'message' => 'Meal added to dashboard'];
+    } else {
+        $error = $stmt->error;
+        $stmt->close();
+        $db->close();
+        return ['success' => false, 'message' => 'Failed to add meal: ' . $error];
+    }
+}
+
+// get users meals for a date. getting history
+function handleGetDashboard($data) {
+    $user_id = $data['user_id'] ?? null;
+    $plan_date = $data['plan_date'] ?? null;
+
+    if (!$user_id || !$plan_date) {
+        return ['success' => false, 'message' => 'missing user_id or plan_date'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare(
+        "SELECT dpm.id AS daily_plan_meal_id, dpm.meal_type, m.id AS meal_id, m.name, m.image_url, m.calories
+         FROM daily_plans dp
+         JOIN daily_plan_meals dpm ON dp.id = dpm.daily_plan_id
+         JOIN meals m ON dpm.meal_id = m.id
+         WHERE dp.user_id = ? AND dp.plan_date = ?
+         ORDER BY dpm.meal_type, dpm.added_at"
+    );
+    $stmt->bind_param("is", $user_id, $plan_date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meals = [];
+    while ($row = $result->fetch_assoc()) {
+        $meals[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'meals' => $meals];
+}
+
+// Brian P - remove the meal from dash
+function handleRemoveFromDashboard($data) {
+    $user_id = $data['user_id'] ?? null;
+    $daily_plan_meal_id = $data['daily_plan_meal_id'] ?? null;
+
+    if (!$user_id || !$daily_plan_meal_id) {
+        return ['success' => false, 'message' => 'missing required fields'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    // verify daily plan id and user id
+    $stmt = $db->prepare(
+        "DELETE dpm FROM daily_plan_meals dpm
+         JOIN daily_plans dp ON dpm.daily_plan_id = dp.id
+         WHERE dpm.id = ? AND dp.user_id = ?"
+    );
+    $stmt->bind_param("ii", $daily_plan_meal_id, $user_id);
+
+    if ($stmt->execute()) {
+        $affected = $stmt->affected_rows;
+        $stmt->close();
+        $db->close();
+        if ($affected > 0) {
+            return ['success' => true, 'message' => 'Meal removed from dashboard'];
+        } else {
+            return ['success' => false, 'message' => 'Meal not found or not yours'];
+        }
+    } else {
+        $stmt->close();
+        $db->close();
+        return ['success' => false, 'message' => 'Failed to remove meal'];
+    }
+}
+
 
 
 ?>

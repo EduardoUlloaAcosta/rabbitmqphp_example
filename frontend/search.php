@@ -18,20 +18,12 @@ if (!isset($_SESSION['user_id'])) {
                 <li><a href="search.php">Home</a></li>
                 <li><a href="profile.html">Profile</a></li>
                 <li><a href="calorieTracker.html">Calorie Tracker</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
 
             </ul>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
-<<<<<<< HEAD
-=======
-
-        </nav>
-
-    </header>
-</div>
->>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)
 
         </nav>
 
@@ -41,7 +33,6 @@ if (!isset($_SESSION['user_id'])) {
 <!-- edited by ainesh on 2/25 -->
 <div class="box">
     <h1>Search For Meals</h1>
-<<<<<<< HEAD
     <form method="GET" action="search.php">
     <input
         type="text"
@@ -72,8 +63,10 @@ if (!isset($_SESSION['user_id'])) {
   if ($response && $response['success'] && !empty($response['meals'])){
     foreach ($response['meals'] as $meal){
       echo '<div class="mealCard">';
+      echo '<a href="mealDetails.php?id=' . $meal['id'] . '">';
       echo '<img src="' . htmlspecialchars($meal['image_url']) . '" alt "' . htmlspecialchars($meal['name']) . '">';
       echo '<p>' . htmlspecialchars($meal['name']) . '</p>';
+      echo '</a>';
       echo '</div>';
     }
   } else{
@@ -82,13 +75,3 @@ if (!isset($_SESSION['user_id'])) {
   ?>
 
 </div>
-=======
-
-    <div class="searchBox">
-        <input
-            type="text"
-            placeholder="Search for meals (e.g, chicken, pasta, salad...." />
-        <link rel="stylesheet" href="searchstyle.css" />
-    </div>
-</div>
->>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)

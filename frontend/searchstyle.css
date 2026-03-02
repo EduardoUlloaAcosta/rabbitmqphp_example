@@ -133,7 +133,6 @@ input {
 .logout-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.85);
-<<<<<<< HEAD
 }
 
 /* added on 2/23 by ainesh, meal grid styles :)*/
@@ -155,9 +154,10 @@ input {
   background-color: #f9f9f9;
 }
 
-.mealCard.img{
-  width: 20%;
-  height: 20px;
+.mealCard img{
+  width: 100%;
+  max-width: 200px;
+  height: 150px;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -171,6 +171,67 @@ body {
   flex-direction: column;
   align-items: center;
 }
-=======
+
+/* added by Brian on 2/26 for better looks*/
+.mealDetail {
+  max-width: 700px;
+  margin: 20px auto;
+  text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
 }
->>>>>>> e410057 (Styled the Search page-added a header with a logout function and refrences to other pages)
+
+.mealDetail img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.mealDetail h1, .mealDetail h2 {
+  position: static;
+}
+
+.mealDetail p {
+  margin-bottom: 10px;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.ingredients-list li {
+  padding: 4px 0;
+}
+
+.add-to-dashboard {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.reviewSection {
+  max-width: 700px;
+  margin: 20px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.success-msg {
+  color: #2a6b4a;
+  margin-bottom: 10px;
+}
+
+.error-msg {
+  color: #cc5555;
+  margin-bottom: 10px;
+}
+

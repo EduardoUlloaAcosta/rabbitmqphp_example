@@ -20,9 +20,9 @@ function sendDmzRequest($data, $timeout = 15) {
 
         $channel->exchange_declare(DMZ_EXCHANGE, DMZ_EXCHANGE_TYPE, false, true, false);
 
-        $replyQueueName= 'dmz_reply_' . uniqid();
-        $channel->queue_declare($replyQueueName, false, false, false, true);
-        $replyQueue = $replyQueueName; // fix permission issue with queues for dmz
+        $replyQueueName = 'dmz_reply_' . uniqid();
+        $channel->queue_declare($replyQueueName, false, false, false, true); //unexclusive replay queue
+        $replyQueue = $replyQueueName;
 
         $replyRoutingKey = DMZ_ROUTING_KEY . ".response";
         $channel->queue_bind($replyQueue, DMZ_EXCHANGE, $replyRoutingKey);
