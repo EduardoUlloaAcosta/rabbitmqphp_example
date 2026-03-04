@@ -35,6 +35,19 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
         }
     }
 }
+
+
+// meal recommendation logic/ Brian Patoilo 3/4/26
+$recommendations = [];
+$recResponse = sendRequest([
+    'type' => 'get_recommendations',
+    'user_id' => $_SESSION['user_id'],
+    'plan_date' => $plan_date
+]);
+if ($recResponse && $recResponse['success'] && !empty($recResponse['meals'])) {
+    $recommendations = $recResponse['meals'];
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -72,7 +85,21 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
         <p class="history-label">Viewing: <?= date('F j, Y', strtotime($plan_date)) ?></p>
     <?php endif; ?>
 
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
     <p class="calorie-total">Total Calories: <strong><?= $totalCalories ?> cal</strong></p>
+
+    <?php if (!empty($recommendations)): ?>
+            <div class="recommendations">
+                <strong>Recommended for You</strong>
+                <ul>
+                    <?php foreach ($recommendations as $rec): ?>
+                        <li><a href="meal.php?id=<?= $rec['id'] ?>"><?= htmlspecialchars($rec['name']) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    </div>
+
 
     <div class="grid">
         <div class="box1">
