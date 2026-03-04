@@ -1,3 +1,5 @@
+frontend/vendor/
+consumer/vendor/
 vendor/
 worker/.env
 .env
