@@ -1,12 +1,12 @@
 <?php
 session_start();
 // need to get the stuff that is being used by the user
-$user_id = $_SESSION['user_id'];
+
 if(!isset($_SESSION['user_id'])){
     header('Location: index.html?error=' . urlencode('....what you have come to find is not here'));
     exit;
 }
-
+$user_id = $_SESSION['user_id'];
 require_once __DIR__ . '/rabbitmq_helper.php';
 
 //Messages for success or failure
@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'type' => 'update_user_profile',
         //check session using user_id
         'user_id' => $_SESSION['user_id'],
+        //need to make insert statement for DB
         'height' => $_POST['height'],
         'current_weight' => $_POST['current_weight'],
         'goal_weight' => $_POST['goal_weight']
@@ -26,13 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($response['success']) {
         $successMsg = 'Your profile has been saved!!!!!';
 
-        //ISSUE - PAGE NOT POPPING UP WHEN RUNNING - Check Routing for pages
+        //FIXED - PAGE NOT POPPING UP WHEN RUNNING - Check Routing for pages
     } else {
         $errorMsg = $response['message'];
     }
 
-
-
+}
 
 ?>
 
