@@ -467,6 +467,39 @@ function handleUpdateUserProfile($data){
         return ['success' => false, 'message' => 'failed to update profile: ' . $stmt->error];
     }
 }
+
+//
+function handleGetUserProfile($data){
+    $user_id = $data[user_id] ?? null;
+
+    if (!user_id){
+        return ['success' => false, 'message' => 'missing user_id'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+     $stmt = $db->prepare("
+     SELECT height,
+     current_weight,
+     goal_weight FROM users
+     WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'profile' => $profile];
+}
+
+
+
+
 ?>
 
 

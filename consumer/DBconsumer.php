@@ -81,6 +81,10 @@ $callback = function ($msg) {
             case 'update_user_profile':
                 $response = handleUpdateUserProfile($data);
                 break;
+            //case for getting user Profile
+            case 'get_user_profile':
+                $response = handleGetUserProfile($data);
+                break;
 
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
