@@ -77,6 +77,11 @@ $callback = function ($msg) {
             //     $response = handleGetProfile($data);
             //     break;
 
+            //stefan - 3/3/26 - need to make functionality for userProfile
+            case 'update_user_profile':
+                $response = handleUpdateUserProfile($data);
+                break;
+
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
                 echo " [!] Unknown type: $type\n";

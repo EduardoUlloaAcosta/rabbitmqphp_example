@@ -1,3 +1,42 @@
+<?php
+session_start();
+// need to get the stuff that is being used by the user
+$user_id = $_SESSION['user_id'];
+if(!isset($_SESSION['user_id'])){
+    header('Location: index.html?error=' . urlencode('....what you have come to find is not here'));
+    exit;
+}
+
+require_once __DIR__ . '/rabbitmq_helper.php';
+
+//Messages for success or failure
+$successMsg = '';
+$errorMsg = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $response = sendRequest([
+        'type' => 'update_user_profile',
+        //check session using user_id
+        'user_id' => $_SESSION['user_id'],
+        'height' => $_POST['height'],
+        'current_weight' => $_POST['current_weight'],
+        'goal_weight' => $_POST['goal_weight']
+    ]);
+
+    if ($response['success']) {
+        $successMsg = 'Your profile has been saved!!!!!';
+
+        //ISSUE - PAGE NOT POPPING UP WHEN RUNNING - Check Routing for pages
+    } else {
+        $errorMsg = $response['message'];
+    }
+
+
+
+
+?>
+
+
 <html>
 
 <head>
@@ -63,25 +102,28 @@
 </style>
 
 <body>
-    <div class="box">
-        <!-- Height Box -->
-    
+
+<form method="POST">
+    <!-- Height Box -->
     <div class="small-box">
-        <input type="text" placeholder="Input Height: ">
+        <input type="number" name="height" placeholder="Input Height (inches): ">
     </div>
     <!-- Weight Box -->
     <div class="small-box">
-        <input type="text" placeholder="Input Weight: ">
+        <input type="number" name="current_weight" placeholder="Input Weight (lbs): ">
     </div>
-    <!-- Goal Weight Preference -->
+    <!-- Goal Weight -->
     <div class="small-box">
-        <input type="text" placeholder="Input Goal Weight: ">
+        <input type="number" name="goal_weight" placeholder="Input Goal Weight (lbs): ">
     </div>
-    <!-- Diet Preference -->
+    <!-- Diet Preference (leaving as text for now) -->
     <div class="small-box">
-        <input type="text" placeholder="Diet Preference: ">
+        <input type="text" name="diet" placeholder="Diet Preference: ">
     </div>
-
+    <div class="small-box">
+        <button type="submit">Save Profile</button>
+    </div>
+</form>
     
  
     

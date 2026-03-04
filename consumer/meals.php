@@ -431,6 +431,50 @@ function handleRemoveFromDashboard($data) {
     }
 }
 
+// Stefan - 3/3 - all this stuff is for userProfile, the frontend of it is in userPage.php
+function handleUpdateUserProfile($data){
+    $user_id = $data['user_id'] ?? null;
+    $height = $data['height'] ?? null;
+    $current_weight = $data['current_weight'] ?? null;
+    $goal_weight = $data['goal_weight'] ?? null;
+
+    if (!$user_id) {
+        return ['success' => false, 'message' => 'missing user_id'];
+    }
+
+      $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+       $stmt = $db->prepare("
+       UPDATE users SET height = ?,
+       current_weight = ?,
+       goal_weight = ?
+       WHERE user_id = ?");
+    $stmt->bind_param("dddi", $height, $current_weight, $goal_weight, $user_id);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $db->close();
+        //Profilr update was successful
+        return ['success' => true, 'message' => 'Profile updated!'];
+    } else {
+        $stmt->close();
+        $db->close();
+        //update was unsuccessful
+        return ['success' => false, 'message' => 'failed to update profile: ' . $stmt->error];
+    }
+}
+?>
+
+
+
+
+
+
+
+}
+
 
 
 ?>
