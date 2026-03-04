@@ -292,7 +292,9 @@ function handlePostReview($data){
         return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
         }
 
-        $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text) VALUES(?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_text = VALUES(review_text)");
         $stmt->bind_param("iiis", $user_id, $meal_id, $rating, $review_text);
 
         if($stmt->execute()){
