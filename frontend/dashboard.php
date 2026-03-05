@@ -88,12 +88,12 @@ if ($recResponse && $recResponse['success'] && !empty($recResponse['meals'])) {
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
     <p class="calorie-total">Total Calories: <strong><?= $totalCalories ?> cal</strong></p>
 
-    <?php if (!empty($recommendations)): ?>
+    <?php if (!empty($recommendations)): ?> <!-- displays meals recommendations in the top right -->
             <div class="recommendations">
                 <strong>Recommended for You</strong>
                 <ul>
                     <?php foreach ($recommendations as $rec): ?>
-                        <li><a href="meal.php?id=<?= $rec['id'] ?>"><?= htmlspecialchars($rec['name']) ?></a></li>
+                        <li><a href="mealDetails.php?id=<?= $rec['id'] ?>"><?= htmlspecialchars($rec['name']) ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
