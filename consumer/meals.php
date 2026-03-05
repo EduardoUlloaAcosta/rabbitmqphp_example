@@ -433,6 +433,34 @@ function handleRemoveFromDashboard($data) {
     }
 }
 
+//test function added 3/5 for recommendations on dashboard Brian Patoilo
+function handleGetRecommendations($data) {
+    $user_id = $data['user_id'];
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    $stmt = $db->prepare("
+        SELECT id, name FROM meals
+        ORDER BY RAND()
+        LIMIT 3
+    ");
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meals = [];
+    while ($row = $result->fetch_assoc()) {
+        $meals[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'meals' => $meals];
+}
+
 
 
 ?>

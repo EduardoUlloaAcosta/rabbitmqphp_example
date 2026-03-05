@@ -69,6 +69,10 @@ $callback = function ($msg) {
             case 'remove_from_dashboard':
                 $response = handleRemoveFromDashboard($data);
                 break;
+            case 'get_recommendations': // recommendations caller 3/5 brian
+                $response = handleGetRecommendations($data);
+                break;
+
 
 
             // add cases here when make more features
