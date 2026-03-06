@@ -102,19 +102,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </style>
 
 <body>
-
+<!-- Users will be able to enter their height, current weight, goal weight, and diet Preference -->
 <form method="POST">
     <!-- Height Box -->
     <div class="small-box">
-        <input type="number" name="height" placeholder="Input Height (inches): ">
+        <input type="text" name="height" placeholder="Input Height (in cm): ">
     </div>
     <!-- Weight Box -->
     <div class="small-box">
-        <input type="number" name="current_weight" placeholder="Input Weight (lbs): ">
+        <input type="text" name="current_weight" placeholder="Input Weight (lbs): ">
     </div>
     <!-- Goal Weight -->
     <div class="small-box">
-        <input type="number" name="goal_weight" placeholder="Input Goal Weight (lbs): ">
+        <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): ">
     </div>
     <!-- Diet Preference (leaving as text for now) -->
     <div class="small-box">

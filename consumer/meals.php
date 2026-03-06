@@ -506,10 +506,4 @@ function handleGetUserProfile($data){
 
 
 
-
-
-}
-
-
-
 ?>
