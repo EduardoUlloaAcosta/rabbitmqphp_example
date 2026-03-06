@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) 
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
                 <li><a href="profile.html">Profile</a></li>
-                <li><a href="calorieTracker.html">Calorie Tracker</a></li>
+                <li><a href="calorieTrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
             <div class="logout-btn">

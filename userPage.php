@@ -9,6 +9,19 @@ if(!isset($_SESSION['user_id'])){
 $user_id = $_SESSION['user_id'];
 require_once __DIR__ . '/rabbitmq_helper.php';
 
+//if the profile alrady has existing stats then they should be brought back up on load
+$profile = [];
+$profileResponse = sendRequest([
+    //get_user_profile can be found in DBconsumer and that links to meals.php
+    'type' => 'get_user_profile',
+    'user_id' => $user_id
+]);
+if ($profileResponse['success']) {
+    $profile = $profileResponse['profile'];
+}
+
+
+
 //Messages for success or failure
 $successMsg = '';
 $errorMsg = '';
@@ -36,6 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
+<!DOCTYPE html>
+
 
 <html>
 
@@ -55,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
                 <li><a href="profile.html">Profile</a></li>
-                <li><a href="calorieTracker.html">Calorie Tracker</a></li>
+                <li><a href="calorieTrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
 
             </ul>
@@ -117,9 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): ">
     </div>
     <!-- Diet Preference (leaving as text for now) -->
-    <div class="small-box">
+ <!--   <div class="small-box">
         <input type="text" name="diet" placeholder="Diet Preference: ">
-    </div>
+    </div>-->
+<!--will work in later      -->
     <div class="small-box">
         <button type="submit">Save Profile</button>
     </div>
