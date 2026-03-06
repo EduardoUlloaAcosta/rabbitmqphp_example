@@ -468,9 +468,9 @@ function handleUpdateUserProfile($data){
     }
 }
 
-//
+// Get existing user metrics
 function handleGetUserProfile($data){
-    $user_id = $data[user_id] ?? null;
+    $user_id = $data['user_id'] ?? null;
 
     if (!user_id){
         return ['success' => false, 'message' => 'missing user_id'];
@@ -496,6 +496,7 @@ function handleGetUserProfile($data){
 
     return ['success' => true, 'profile' => $profile];
 }
+//i messed it up again......
 
 
 
