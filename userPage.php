@@ -118,18 +118,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 <!-- Users will be able to enter their height, current weight, goal weight, and diet Preference -->
+<!-- also need to make it so that the data shows up when the user loads the age so they know it -->
 <form method="POST">
     <!-- Height Box -->
     <div class="small-box">
-        <input type="text" name="height" placeholder="Input Height (in cm): ">
+        <input type="text" name="height" placeholder="Input Height (in cm): "
+        value="<?= htmlspecialchars($profile['height'] ?? '') ?>">
     </div>
     <!-- Weight Box -->
     <div class="small-box">
-        <input type="text" name="current_weight" placeholder="Input Weight (lbs): ">
+        <input type="text" name="current_weight" placeholder="Input Weight (lbs): "
+        value="<?= htmlspecialchars($profile['current_weight'] ?? '') ?>">
     </div>
     <!-- Goal Weight -->
     <div class="small-box">
-        <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): ">
+        <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): "
+        value="<?= htmlspecialchars($profile['goal_weight'] ?? '') ?>">
     </div>
     <!-- Diet Preference (leaving as text for now) -->
  <!--   <div class="small-box">
@@ -139,9 +143,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="small-box">
         <button type="submit">Save Profile</button>
     </div>
-</form>
-    
- 
+
+
+
+
+
+
+
+
     
 </body>
 
