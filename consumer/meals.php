@@ -472,7 +472,7 @@ function handleUpdateUserProfile($data){
 function handleGetUserProfile($data){
     $user_id = $data['user_id'] ?? null;
 
-    if (!user_id){
+    if (!$user_id){
         return ['success' => false, 'message' => 'missing user_id'];
     }
 
