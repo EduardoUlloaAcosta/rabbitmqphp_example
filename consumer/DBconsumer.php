@@ -85,6 +85,15 @@ $callback = function ($msg) {
             case 'get_user_profile':
                 $response = handleGetUserProfile($data);
                 break;
+			case 'get_user_diet': //added to get diet
+			    $response = handleGetUserDiet($data);
+			    break;
+			case 'update_user_diet':
+			    $response = handleUpdateUserDiet($data);
+			    break;
+			case 'delete_user_diet':
+			    $response = handleDeleteUserDiet($data);
+			    break;
 
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
