@@ -55,12 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'user_id' => $_SESSION['user_id']
         ]);
     }
-    ]);
 
     if ($response['success']) {
         $successMsg = 'Your profile has been saved!!!!!';
-
-        //FIXED - PAGE NOT POPPING UP WHEN RUNNING - Check Routing for pages
     } else {
         $errorMsg = $response['message'];
     }
@@ -70,39 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-
-
 <html>
 
 <head>
 <link rel="stylesheet" href="searchstyle.css">
 <link rel="stylesheet" href="global.css">
-
-<!DOCTYPE html>
-<div class="headerMain">
-    <header>
-        <nav>
-            <div class="logo">
-                <a href="search.php">Cooking Crew</a>
-                <link rel="stylesheet" href="global.css" />
-                <link rel="stylesheet" href="searchstyle.css" />
-            </div>
-            <ul class="nav-links">
-                <li><a href="search.php">Home</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
-
-            </ul>
-            <div class="logout-btn">
-                <a href="logout.php">Logout</a>
-            </div>
-
-        </nav>
-
-    </header>
-</div>
-
 
 <style>
     .box {
@@ -120,9 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
         margin: 10px;
-
     }
-
     .small-box{
         width: 400px;
         height: 60px;
@@ -131,14 +98,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         padding: 10px;
         margin: 10px;
         margin-top: 50px;
-
-
     }
 </style>
+</head>
 
 <body>
+<div class="headerMain">
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="search.php">Cooking Crew</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="search.php">Home</a></li>
+                <li><a href="userPage.php">Profile</a></li>
+                <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
+            </ul>
+            <div class="logout-btn">
+                <a href="logout.php">Logout</a>
+            </div>
+        </nav>
+    </header>
+</div>
+
 <!-- Users will be able to enter their height, current weight, goal weight, and diet Preference -->
-<!-- also need to make it so that the data shows up when the user loads the age so they know it -->
 <form method="POST">
     <!-- Height Box -->
     <div class="small-box">
@@ -155,18 +139,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): "
         value="<?= htmlspecialchars($profile['goal_weight'] ?? '') ?>">
     </div>
-    <!-- diet stuff -->
+    <!-- Diet Preference -->
     <div class="small-box">
-    <label for="diet">Diet Preference: </label>
-    <select name="diet" id="diet">
-        <option value="">-- None --</option>
-        <option value="Vegan" <?= ($currentDiet === 'Vegan') ? 'selected' : '' ?>>Vegan</option>
-        <option value="Vegetarian" <?= ($currentDiet === 'Vegetarian') ? 'selected' : '' ?>>Vegetarian</option>
-        <option value="High Protein" <?= ($currentDiet === 'High Protein') ? 'selected' : '' ?>>High Protein</option>
-        <option value="No Red Meat" <?= ($currentDiet === 'No Red Meat') ? 'selected' : '' ?>>No Red Meat</option>
-        <option value="Chud" <?= ($currentDiet === 'Chud') ? 'selected' : '' ?>>Chud</option>
-    </select>
-</div>
+        <label for="diet">Diet Preference: </label>
+        <select name="diet" id="diet">
+            <option value="">-- None --</option>
+            <option value="Vegan" <?= ($currentDiet === 'Vegan') ? 'selected' : '' ?>>Vegan</option>
+            <option value="Vegetarian" <?= ($currentDiet === 'Vegetarian') ? 'selected' : '' ?>>Vegetarian</option>
+            <option value="High Protein" <?= ($currentDiet === 'High Protein') ? 'selected' : '' ?>>High Protein</option>
+            <option value="No Red Meat" <?= ($currentDiet === 'No Red Meat') ? 'selected' : '' ?>>No Red Meat</option>
+            <option value="Chud" <?= ($currentDiet === 'Chud') ? 'selected' : '' ?>>Chud</option>
+        </select>
+    </div>
     <!-- BMI Result -->
     <div class="small-box" style="height: auto;">
         <p>BMI: <span id="bmi-value">--</span></p>
@@ -174,7 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="small-box">
         <button type="submit">Save Profile</button>
     </div>
-
 </form>
 
 <?php if ($successMsg): ?>
@@ -202,18 +185,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
 </body>
-</html>
-
-
-
-
-</body>
-
-
-
-
-
-
-</head>
 </html>
 
