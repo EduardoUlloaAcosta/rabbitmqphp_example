@@ -496,15 +496,70 @@ function handleGetUserProfile($data){
 
     return ['success' => true, 'profile' => $profile];
 }
-//lmao just git add
+function handleUpdateUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
+    $diet_name = $data['diet_name'] ?? null;
 
+    if (!$user_id || !$diet_name) {
+        return ['success' => false, 'message' => 'missing fields'];
+    }
 
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
 
+    $del = $db->prepare("DELETE FROM user_diets WHERE user_id = ?");
+    $del->bind_param("i", $user_id);
+    $del->execute();
+    $del->close();
 
-?>
+    $stmt = $db->prepare("INSERT INTO user_diets (user_id, diet_name) VALUES (?, ?)");
+    $stmt->bind_param("is", $user_id, $diet_name);
+    $stmt->execute();
 
+    $stmt->close();
+    $db->close();
 
+    return ['success' => true, 'message' => 'Diet saved'];
+}
 
+function handleDeleteUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
 
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $stmt = $db->prepare("DELETE FROM user_diets WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'message' => 'Diet preference removed'];
+}
+
+function handleGetUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $stmt = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ? LIMIT 1");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'diet_name' => $row['diet_name'] ?? ''];
+}
 
 ?>
