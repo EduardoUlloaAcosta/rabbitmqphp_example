@@ -81,6 +81,24 @@ $callback = function ($msg) {
             //     $response = handleGetProfile($data);
             //     break;
 
+			 //stefan - 3/3/26 - need to make functionality for userProfile
+            case 'update_user_profile':
+                $response = handleUpdateUserProfile($data);
+                break;
+            //case for getting user Profile
+            case 'get_user_profile':
+                $response = handleGetUserProfile($data);
+                break;
+			case 'get_user_diet': //added to get diet
+			    $response = handleGetUserDiet($data);
+			    break;
+			case 'update_user_diet':
+			    $response = handleUpdateUserDiet($data);
+			    break;
+			case 'delete_user_diet':
+			    $response = handleDeleteUserDiet($data);
+			    break;
+
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
                 echo " [!] Unknown type: $type\n";
