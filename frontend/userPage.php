@@ -37,24 +37,24 @@ $errorMsg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = sendRequest([
         'type' => 'update_user_profile',
-        //check session using user_id
         'user_id' => $_SESSION['user_id'],
-        //need to make insert statement for DB
         'height' => $_POST['height'],
         'current_weight' => $_POST['current_weight'],
         'goal_weight' => $_POST['goal_weight']
-        if (!empty($_POST['diet'])) { //if statement for the diet logic to remove or add preference
-            sendRequest([
-                'type' => 'update_user_diet',
-                'user_id' => $_SESSION['user_id'],
-                'diet_name' => $_POST['diet']
-            ]);
-        } else {
-            sendRequest([
-                'type' => 'delete_user_diet',
-                'user_id' => $_SESSION['user_id']
-            ]);
-        }
+    ]);
+
+    if (!empty($_POST['diet'])) {
+        sendRequest([
+            'type' => 'update_user_diet',
+            'user_id' => $_SESSION['user_id'],
+            'diet_name' => $_POST['diet']
+        ]);
+    } else {
+        sendRequest([
+            'type' => 'delete_user_diet',
+            'user_id' => $_SESSION['user_id']
+        ]);
+    }
     ]);
 
     if ($response['success']) {
