@@ -442,11 +442,31 @@ function handleGetRecommendations($data) {
         return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
     }
 
-    $stmt = $db->prepare("
-        SELECT id, name FROM meals
-        ORDER BY RAND()
-        LIMIT 3
-    ");
+    //adding diet retrieval for meal recommendations
+    $dietStuff = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ?");
+    $dietStuff->bind_param("i", $user_id);
+    $dietStuff->execute();
+    $dietResult = $dietStuff->get_result();
+
+    $categories = [];
+    while ($row = $dietResult->fetch_assoc()) {
+        $mapped = getDietCategories($row['diet_name']);
+        $categories = array_merge($categories, $mapped);
+    }
+
+    $categories = array_unique($categories);
+    $dietStuff->close();
+
+     if (!empty($categories)) {
+        $placeholders = implode(',', array_fill(0, count($categories), '?'));
+        $sql = "SELECT id, name FROM meals WHERE category IN ($placeholders) ORDER BY RAND() LIMIT 3";
+        $types = str_repeat('s', count($categories));
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param($types, ...$categories);
+    } else {
+        $stmt = $db->prepare("SELECT id, name FROM meals ORDER BY RAND() LIMIT 3"); //reuse random logic for people who have not selected a diet
+    }
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -461,6 +481,18 @@ function handleGetRecommendations($data) {
     return ['success' => true, 'meals' => $meals];
 }
 
+// adding funtion 3/9 for diet preferences. I looked up how to do this and I found mapping the categories of the meals to a specific diary
+function getDietCategories($diet_name) {
+    $map = [
+        'Vegan'        => ['Vegan'],
+        'Vegetarian'   => ['Vegetarian', 'Vegan'],
+        'High Protein' => ['Chicken', 'Beef', 'Lamb', 'Seafood', 'Goat', 'Pork'],
+        'No Red Meat'  => ['Chicken', 'Seafood', 'Vegetarian', 'Vegan'],
+        'Chud'         => ['Dessert', 'Miscellaneous', 'Pasta', 'Side', 'Starter', 'Breakfast'],
+    ];
+
+    return $map[$diet_name] ?? [];
+}
 
 
 ?>
