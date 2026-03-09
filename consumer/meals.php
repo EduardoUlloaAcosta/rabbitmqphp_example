@@ -496,7 +496,7 @@ function handleGetUserProfile($data){
 
     return ['success' => true, 'profile' => $profile];
 }
-//i messed it up again......
+//lmao just git add
 
 
 
