@@ -20,7 +20,15 @@ if ($profileResponse['success']) {
     $profile = $profileResponse['profile'];
 }
 
-
+// getting diet preference
+$currentDiet = '';
+$dietResponse = sendRequest([
+    'type' => 'get_user_diet',
+    'user_id' => $user_id
+]);
+if ($dietResponse['success'] && !empty($dietResponse['diet_name'])) {
+    $currentDiet = $dietResponse['diet_name'];
+}
 
 //Messages for success or failure
 $successMsg = '';
@@ -35,6 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'height' => $_POST['height'],
         'current_weight' => $_POST['current_weight'],
         'goal_weight' => $_POST['goal_weight']
+        if (!empty($_POST['diet'])) { //if statement for the diet logic to remove or add preference
+            sendRequest([
+                'type' => 'update_user_diet',
+                'user_id' => $_SESSION['user_id'],
+                'diet_name' => $_POST['diet']
+            ]);
+        } else {
+            sendRequest([
+                'type' => 'delete_user_diet',
+                'user_id' => $_SESSION['user_id']
+            ]);
+        }
     ]);
 
     if ($response['success']) {
@@ -135,6 +155,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="goal_weight" placeholder="Input Goal Weight (lbs): "
         value="<?= htmlspecialchars($profile['goal_weight'] ?? '') ?>">
     </div>
+    <!-- diet stuff -->
+    <div class="small-box">
+    <label for="diet">Diet Preference: </label>
+    <select name="diet" id="diet">
+        <option value="">-- None --</option>
+        <option value="Vegan" <?= ($currentDiet === 'Vegan') ? 'selected' : '' ?>>Vegan</option>
+        <option value="Vegetarian" <?= ($currentDiet === 'Vegetarian') ? 'selected' : '' ?>>Vegetarian</option>
+        <option value="High Protein" <?= ($currentDiet === 'High Protein') ? 'selected' : '' ?>>High Protein</option>
+        <option value="No Red Meat" <?= ($currentDiet === 'No Red Meat') ? 'selected' : '' ?>>No Red Meat</option>
+        <option value="Chud" <?= ($currentDiet === 'Chud') ? 'selected' : '' ?>>Chud</option>
+    </select>
+</div>
     <!-- BMI Result -->
     <div class="small-box" style="height: auto;">
         <p>BMI: <span id="bmi-value">--</span></p>
