@@ -493,6 +493,133 @@ function getDietCategories($diet_name) {
 
     return $map[$diet_name] ?? [];
 }
+// Stefan - 3/3 - all this stuff is for userProfile, the frontend of it is in userPage.php
+function handleUpdateUserProfile($data){
+    $user_id = $data['user_id'] ?? null;
+    $height = $data['height'] ?? null;
+    $current_weight = $data['current_weight'] ?? null;
+    $goal_weight = $data['goal_weight'] ?? null;
 
+    if (!$user_id) {
+        return ['success' => false, 'message' => 'missing user_id'];
+    }
+
+      $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+       $stmt = $db->prepare("
+       UPDATE users SET height = ?,
+       current_weight = ?,
+       goal_weight = ?
+       WHERE user_id = ?");
+    $stmt->bind_param("dddi", $height, $current_weight, $goal_weight, $user_id);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $db->close();
+        //Profilr update was successful
+        return ['success' => true, 'message' => 'Profile updated!'];
+    } else {
+        $stmt->close();
+        $db->close();
+        //update was unsuccessful
+        return ['success' => false, 'message' => 'failed to update profile: ' . $stmt->error];
+    }
+}
+
+// Get existing user metrics
+function handleGetUserProfile($data){
+    $user_id = $data['user_id'] ?? null;
+
+    if (!$user_id){
+        return ['success' => false, 'message' => 'missing user_id'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+     $stmt = $db->prepare("
+     SELECT height,
+     current_weight,
+     goal_weight FROM users
+     WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'profile' => $profile];
+}
+function handleUpdateUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
+    $diet_name = $data['diet_name'] ?? null;
+
+    if (!$user_id || !$diet_name) {
+        return ['success' => false, 'message' => 'missing fields'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $del = $db->prepare("DELETE FROM user_diets WHERE user_id = ?");
+    $del->bind_param("i", $user_id);
+    $del->execute();
+    $del->close();
+
+    $stmt = $db->prepare("INSERT INTO user_diets (user_id, diet_name) VALUES (?, ?)");
+    $stmt->bind_param("is", $user_id, $diet_name);
+    $stmt->execute();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'message' => 'Diet saved'];
+}
+
+function handleDeleteUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $stmt = $db->prepare("DELETE FROM user_diets WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'message' => 'Diet preference removed'];
+}
+
+function handleGetUserDiet($data) {
+    $user_id = $data['user_id'] ?? null;
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $stmt = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ? LIMIT 1");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'diet_name' => $row['diet_name'] ?? ''];
+}
 
 ?>
