@@ -13,7 +13,7 @@ function handleLogin($data) {
 
     try {
         $db = getDB();
-        $stmt = $db->prepare("SELECT user_id, username, password FROM users WHERE username = ?");
+        $stmt = $db->prepare("select user_id, username, password from users where username = ?");
         $stmt->bind_param("s", $data['username']);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -22,7 +22,7 @@ function handleLogin($data) {
                 //adding code to generate a session key for future login's. it may
                 //or maynot work because i searched up a tutorial
                 $sessionKey = bin2hex(random_bytes(32));
-                $stmt2 = $db->prepare("INSERT INTO session_keys (user_id, session_key) VALUES (?, ?)");
+                $stmt2 = $db->prepare("insert into session_keys (user_id, session_key) values (?, ?)");
                 $stmt2->bind_param("is", $row['user_id'], $sessionKey);
                 $stmt2->execute();
                 $stmt2->close();

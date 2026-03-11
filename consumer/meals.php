@@ -21,7 +21,7 @@ function handleSearchMeal($data) {
     }
 
     $searchTerm = '%' . $query . '%';
-    $stmt = $db->prepare("SELECT id, api_id, name, category, area, image_url, calories FROM meals WHERE name LIKE ?");
+    $stmt = $db->prepare("select id, api_id, name, category, area, image_url, calories from meals where name LIKE ?");
     $stmt->bind_param("s", $searchTerm);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -86,13 +86,13 @@ function handleGetMeals($data){
     return ['success' => true, 'meals' => $meals];
 }
 
-// 2/25/26 function to search meals by first letter for cronjob
+// 2/25/26 function to search meals by first letter for cronjob, Brian Patoilo
 function handleSearchMealByLetter($data) {
     $letter = $data['letter'] ?? '';
     if (empty($letter)) {
         return ['success' => false, 'message' => 'No letter provided'];
     }
-    echo " [*] Searching meals by letter: $letter\n";
+    echo "Search meal by this letter: $letter\n";
 
     $mealResponse = sendDmzRequest([
         'type' => 'search_meal_by_letter',
@@ -100,7 +100,7 @@ function handleSearchMealByLetter($data) {
     ]);
 
     if ($mealResponse['status'] !== 'success') {
-        return ['success' => false, 'message' => 'Failed to get meals from DMZ: ' . ($mealResponse['message'] ?? 'unknown error')];
+        return ['success' => false, 'message' => 'failure to get info - ' . ($mealResponse['message'] ?? 'unknown error')];
     }
 
     $meals = $mealResponse['results']['meals'] ?? null;
@@ -113,11 +113,11 @@ function handleSearchMealByLetter($data) {
     return processAndInsertMeals($meals);
 }
 
-// process logic to add meals to database for the CRONJOB
+// process logic to add meals to database for the cronjob
 function processAndInsertMeals($meals) {
     $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($db->connect_error) {
-        return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
+        return ['success' => false, 'message' => 'database not connnected: ' . $db->connect_error];
     }
 
     $insertedMeals = [];
@@ -131,12 +131,12 @@ function processAndInsertMeals($meals) {
         $imageUrl = $meal['strMealThumb'] ?? null;
 
         // check if this meal already exists in our DB
-        $checkStmt = $db->prepare("SELECT id, calories FROM meals WHERE api_id = ?");
+        $checkStmt = $db->prepare("select id, calories from meals where api_id = ?");
         $checkStmt->bind_param("s", $apiId);
         $checkStmt->execute();
         $existingResult = $checkStmt->get_result();
 
-        if ($existingResult->num_rows > 0) {
+        if ($existingResult->num_rows > 0) { //check to see if its already added
             $existingMeal = $existingResult->fetch_assoc();
             $insertedMeals[] = [
                 'id' => $existingMeal['id'],
@@ -149,7 +149,7 @@ function processAndInsertMeals($meals) {
                 'already_existed' => true
             ];
             $checkStmt->close();
-            echo "Meal '$name' already exists in DB, skipping\n";
+            echo "Meal '$name' already exists in DB\n";
             continue;
         }
         $checkStmt->close();
@@ -171,9 +171,9 @@ function processAndInsertMeals($meals) {
             echo " FDC search failed for '$name', storing NULL calories\n";
         }
 
-        $stmt = $db->prepare(
-            "INSERT INTO meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
-             VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
+        $stmt = $db->prepare( //all collected info from api
+            "insert into meals (api_id, is_api, name, category, area, instructions, ingredients, image_url, fdc_id, calories)
+             values (?, 1, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
         $stmt->bind_param(
             "ssssssssd",
@@ -200,9 +200,9 @@ function processAndInsertMeals($meals) {
                 'calories' => $calories,
                 'already_existed' => false
             ];
-            echo "Inserted meal: $name (id: $newId)\n";
+            echo "inserted new meal: $name (id: $newId)\n";
         } else {
-            echo "Failed to insert meal '$name': " . $stmt->error . "\n";
+            echo "failure to insert meal '$name': " . $stmt->error . "\n";
         }
         $stmt->close();
     }
@@ -325,7 +325,7 @@ function handleAddToDashboard($data) { //function to add meals to use dashboard 
     }
 
     //creates daily plan for user
-    $stmt = $db->prepare("SELECT id FROM daily_plans WHERE user_id = ? AND plan_date = ?");
+    $stmt = $db->prepare("select id from daily_plans where user_id = ? and plan_date = ?");
     $stmt->bind_param("is", $user_id, $plan_date);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -335,21 +335,21 @@ function handleAddToDashboard($data) { //function to add meals to use dashboard 
         $daily_plan_id = $row['id'];
     } else {
         $stmt->close();
-        $stmt = $db->prepare("INSERT INTO daily_plans (user_id, plan_date) VALUES (?, ?)");
+        $stmt = $db->prepare("insert into daily_plans (user_id, plan_date) values (?, ?)");
         $stmt->bind_param("is", $user_id, $plan_date);
         $stmt->execute();
         $daily_plan_id = $stmt->insert_id;
     }
     $stmt->close();
 
-    // add the meal to the daily plan
-    $stmt = $db->prepare("INSERT INTO daily_plan_meals (daily_plan_id, meal_id, meal_type) VALUES (?, ?, ?)");
+    // add the meal to the daily plan for the user to track multiple meals
+    $stmt = $db->prepare("insert into daily_plan_meals (daily_plan_id, meal_id, meal_type) values (?, ?, ?)");
     $stmt->bind_param("iis", $daily_plan_id, $meal_id, $meal_type);
 
     if ($stmt->execute()) {
         $stmt->close();
         $db->close();
-        return ['success' => true, 'message' => 'Meal added to dashboard'];
+        return ['success' => true, 'message' => 'meal added to user dashboard'];
     } else {
         $error = $stmt->error;
         $stmt->close();
@@ -358,7 +358,7 @@ function handleAddToDashboard($data) { //function to add meals to use dashboard 
     }
 }
 
-// get users meals for a date. getting history
+// get users meals for a date. getting history Brian Patoilo
 function handleGetDashboard($data) {
     $user_id = $data['user_id'] ?? null;
     $plan_date = $data['plan_date'] ?? null;
@@ -372,13 +372,13 @@ function handleGetDashboard($data) {
         return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
     }
 
-    $stmt = $db->prepare(
-        "SELECT dpm.id AS daily_plan_meal_id, dpm.meal_type, m.id AS meal_id, m.name, m.image_url, m.calories
-         FROM daily_plans dp
-         JOIN daily_plan_meals dpm ON dp.id = dpm.daily_plan_id
-         JOIN meals m ON dpm.meal_id = m.id
-         WHERE dp.user_id = ? AND dp.plan_date = ?
-         ORDER BY dpm.meal_type, dpm.added_at"
+    $stmt = $db->prepare( //This some complex shit that I did look up how to do. It is a join between the daily plans, meals, and daily plan meals tables to display everything. I am putting this here to not forget what it does if asked about it.
+        "select dpm.id as daily_plan_meal_id, dpm.meal_type, m.id as meal_id, m.name, m.image_url, m.calories
+         from daily_plans dp
+         join daily_plan_meals dpm ON dp.id = dpm.daily_plan_id
+         join meals m ON dpm.meal_id = m.id
+         where dp.user_id = ? AND dp.plan_date = ?
+         order by dpm.meal_type, dpm.added_at"
     );
     $stmt->bind_param("is", $user_id, $plan_date);
     $stmt->execute();
@@ -409,11 +409,11 @@ function handleRemoveFromDashboard($data) {
         return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
     }
 
-    // verify daily plan id and user id
+    // verify daily plan id and user id to make sure correct delete
     $stmt = $db->prepare(
-        "DELETE dpm FROM daily_plan_meals dpm
-         JOIN daily_plans dp ON dpm.daily_plan_id = dp.id
-         WHERE dpm.id = ? AND dp.user_id = ?"
+        "delete dpm from daily_plan_meals dpm
+         join daily_plans dp on dpm.daily_plan_id = dp.id
+         where dpm.id = ? and dp.user_id = ?"
     );
     $stmt->bind_param("ii", $daily_plan_meal_id, $user_id);
 
@@ -422,14 +422,14 @@ function handleRemoveFromDashboard($data) {
         $stmt->close();
         $db->close();
         if ($affected > 0) {
-            return ['success' => true, 'message' => 'Meal removed from dashboard'];
+            return ['success' => true, 'message' => 'meal removed from dash'];
         } else {
-            return ['success' => false, 'message' => 'Meal not found or not yours'];
+            return ['success' => false, 'message' => 'meal issue'];
         }
     } else {
         $stmt->close();
         $db->close();
-        return ['success' => false, 'message' => 'Failed to remove meal'];
+        return ['success' => false, 'message' => 'failed to remove meal, prob connection error'];
     }
 }
 
@@ -443,7 +443,7 @@ function handleGetRecommendations($data) {
     }
 
     //adding diet retrieval for meal recommendations
-    $dietStuff = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ?");
+    $dietStuff = $db->prepare("select diet_name from user_diets where user_id = ?");
     $dietStuff->bind_param("i", $user_id);
     $dietStuff->execute();
     $dietResult = $dietStuff->get_result();
@@ -459,7 +459,7 @@ function handleGetRecommendations($data) {
 
      if (!empty($categories)) {
         $placeholders = implode(',', array_fill(0, count($categories), '?'));
-        $sql = "SELECT id, name FROM meals WHERE category IN ($placeholders) ORDER BY RAND() LIMIT 3";
+        $sql = "SELECT id, name FROM meals WHERE category IN ($placeholders) ORDER BY RAND() LIMIT 3"; //searched this line to show how to display random options
         $types = str_repeat('s', count($categories));
         $stmt = $db->prepare($sql);
         $stmt->bind_param($types, ...$categories);
@@ -529,7 +529,7 @@ function handleUpdateUserProfile($data){
 }
 
 // Get existing user metrics
-function handleGetUserProfile($data){
+function handleGetUserProfile($data){ //stefan made
     $user_id = $data['user_id'] ?? null;
 
     if (!$user_id){
@@ -556,7 +556,7 @@ function handleGetUserProfile($data){
 
     return ['success' => true, 'profile' => $profile];
 }
-function handleUpdateUserDiet($data) {
+function handleUpdateUserDiet($data) { //stefan made
     $user_id = $data['user_id'] ?? null;
     $diet_name = $data['diet_name'] ?? null;
 
@@ -584,7 +584,7 @@ function handleUpdateUserDiet($data) {
     return ['success' => true, 'message' => 'Diet saved'];
 }
 
-function handleDeleteUserDiet($data) {
+function handleDeleteUserDiet($data) { //stefan and brian worked on together
     $user_id = $data['user_id'] ?? null;
 
     $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -599,10 +599,10 @@ function handleDeleteUserDiet($data) {
     $stmt->close();
     $db->close();
 
-    return ['success' => true, 'message' => 'Diet preference removed'];
+    return ['success' => true, 'message' => 'Diet preference deleted'];
 }
 
-function handleGetUserDiet($data) {
+function handleGetUserDiet($data) { //stefan and brian worked on together
     $user_id = $data['user_id'] ?? null;
 
     $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -610,7 +610,7 @@ function handleGetUserDiet($data) {
         return ['success' => false, 'message' => 'db connection failed'];
     }
 
-    $stmt = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ? LIMIT 1");
+    $stmt = $db->prepare("select diet_name from user_diets where user_id = ? limit 1");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();

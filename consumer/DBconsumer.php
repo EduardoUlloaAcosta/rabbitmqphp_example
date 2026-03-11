@@ -26,7 +26,7 @@ echo "Waiting for messages";
 
 
 $callback = function ($msg) {
-	echo " [x] Recieved:" . $msg->body . "\n";
+	echo "Recieved:" . $msg->body . "\n";
 	$data = json_decode($msg->body, true);
 
 	if ($data === null) {
@@ -101,12 +101,12 @@ $callback = function ($msg) {
 
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
-                echo " [!] Unknown type: $type\n";
+                echo " Unknown type: $type\n";
                 break;
         }
     }
 
-    echo " [x] Response: " . json_encode($response) . "\n\n";
+    echo "Response: " . json_encode($response) . "\n\n";
 
     if ($msg->has('reply_to') && $msg->has('correlation_id')) {
         $replyMsg = new AMQPMessage(
@@ -120,7 +120,7 @@ $callback = function ($msg) {
             $msg->get('reply_to')
         );
 
-        echo " [x] Reply sent to: " . $msg->get('reply_to') . "\n";
+        echo "Reply sent to: " . $msg->get('reply_to') . "\n";
     }
     $msg->ack();
 };
