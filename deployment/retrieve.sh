@@ -8,81 +8,46 @@ source ~/deploy/vmconfigs.conf
 
 PACKAGE_DIR=~/deploy/packages
 CURRENT=~/deploy/current_ver
-DEV_DIR=~/deploy/dev #wrote to make easier
+#remove dev folder because of bundling
 
 mkdir -p $PACKAGE_DIR
 
-#auto incrementing
+#auto incrementing versions
 NEXT_NUM=$(ls $PACKAGE_DIR | wc -l)
 NEXT_NUM=$((NEXT_NUM+1))
 VERSION="v$NEXT_NUM"
 echo "version incremented, pulling dev cluster changes"
 
+# 4/6 update: after talking to kehoe i am going to use
+# scp instead of rsync now. Rsync copies all the files over (like scp)
+# but it detects changes, only thing is that can't be zipped
+# now the idea is to zip the directories on the remote machine
+# then send it to the deploy machine to be zipped into one to be called a version
+
 echo "pull frotned first"
-rsync -avz --chmod=755 $FE_USER@$FE_IP:$FE_PATH/ $DEV_DIR/frontend/
+ssh $FE_USER@$FE_IP "tar -czf /tmp/frontend.tar.gz -C $FE_PATH ."
+scp $FE_USER@$FE_IP:/tmp/frontend.tar.gz /tmp/frontend.tar.gz
+ssh $FE_USER@$FE_IP "rm /tmp/frontend.tar.gz"
 
 echo "pull dmz second"
-rsync -avz --chmod=755 $DMZ_USER@$DMZ_IP:$DMZ_PATH/ $DEV_DIR/dmz/
+ssh $DMZ_USER@$DMZ_IP "tar -czf /tmp/dmz.tar.gz -C $DMZ_PATH ."
+scp $DMZ_USER@$DMZ_IP:/tmp/dmz.tar.gz /tmp/dmz.tar.gz
+ssh $DMZ_USER@$DMZ_IP "rm /tmp/dmz.tar.gz"
 
 echo "pull backend last"
-rsync -avz --chmod=755 $DB_USER@$DB_IP:$DB_PATH/ $DEV_DIR/db/
+ssh $DB_USER@$DB_IP "tar -czf /tmp/db.tar.gz -C $DB_PATH ."
+scp $DB_USER@$DB_IP:/tmp/db.tar.gz /tmp/db.tar.gz
+ssh $DB_USER@$DB_IP "rm /tmp/db.tar.gz"
 
-#I added the chmod command because there were errors with read permissions from the frontend
-#so I did it for all to play it safe
+#now to get all three zips into one package it has to be copied to one area, and then zipped 
+#to create one folder with the version number. then that temporary folder get's deleted so it doesn't leave unecessary
+#storage taken up
 
-CHANGES=false #flag made to check for differences
-
-if [ -f "$CURRENT" ]; then
-    LAST_VER=$(cat $CURRENT)
-    LAST_PKG=$PACKAGE_DIR/$LAST_VER
-    # frontend
-    if [ -d "$LAST_PKG/frontend" ]; then
-        diff -rq $DEV_DIR/frontend/ $LAST_PKG/frontend/ > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "frontend has changes"
-            CHANGES=true
-        fi
-    else
-        echo "frontend files changed"
-        CHANGES=true
-    fi
-    #dmz
-    if [ -d "$LAST_PKG/dmz" ]; then
-        diff -rq $DEV_DIR/dmz/ $LAST_PKG/dmz/ > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "dmz has changes"
-            CHANGES=true
-        fi
-    else
-        echo "dmz files changed"
-        CHANGES=true
-    fi
-    #backend
-    if [ -d "$LAST_PKG/db" ]; then
-        diff -rq $DEV_DIR/db/ $LAST_PKG/db/ > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "db has changes"
-            CHANGES=true
-        fi
-    else
-        echo "db files changed"
-        CHANGES=true
-    fi
-else
-    echo "no previous (except I know there are so this will never get seen)"
-    CHANGES=true
-fi
-
-if [ "$CHANGES" = true ]; then
-    echo "packaging new files yerttt"
-    PKG_DIR=$PACKAGE_DIR/$VERSION
-    mkdir -p $PKG_DIR/frontend $PKG_DIR/dmz $PKG_DIR/db
-
-    cp -r $DEV_DIR/frontend/. $PKG_DIR/frontend/
-    cp -r $DEV_DIR/dmz/. $PKG_DIR/dmz/
-    cp -r $DEV_DIR/db/. $PKG_DIR/db/
-    echo "$VERSION is made yertt"
-else
-    echo "no changes or something went wrong"
-fi
-
+mkdir -p /tmp/package
+mv /tmp/frontend.tar.gz /tmp/package/
+mv /tmp/dmz.tar.gz /tmp/package/
+mv /tmp/db.tar.gz /tmp/package/
+tar -czf $PACKAGE_DIR/$VERSION.tar.gz -C /tmp/package .
+#clean up the loose files so they dont sit on the deploy machine
+rm -rf /tmp/package
+echo "$VERSION.tar.gz is packaged"
