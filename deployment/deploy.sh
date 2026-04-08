@@ -1,4 +1,6 @@
 #!/bin/bash
+#ainesh - 3/31/2026
+#this file handles deployment, rollback, and marking versions as bad.
 source ~/deploy/vmconfigs.conf
 
 PACKAGE_DIR=~/deploy/packages
@@ -16,36 +18,35 @@ if [ "$ACTION" == "deploy" ]; then
         exit 1
     fi
 
-    PKG_DIR=$PACKAGE_DIR/$VERSION
-    mkdir -p $PKG_DIR/frontend $PKG_DIR/dmz $PKG_DIR/db
+    PKG_TAR=$PACKAGE_DIR/$VERSION.tar.gz
 
-    echo "we packing up ver. $VERSION"
-    cp -r ~/deploy/dev/frontend/. $PKG_DIR/frontend/
-    cp -r ~/deploy/dev/dmz/. $PKG_DIR/dmz/
-    cp -r ~/deploy/dev/db/. $PKG_DIR/db/
+    if [ ! -f "$PKG_TAR" ]; then
+        echo "version $VERSION not found </3"
+        exit 1
+    fi
+#ainesh 4/6/26 - updating file to fit our new deployment by extracting thru ssh
+
+    #extracting version tarball for all the respective tar files
+    EXTRACT_DIR=/tmp/deploy_$VERSION
+    mkdir -p $EXTRACT_DIR
+    tar -xzf $PKG_TAR -C $EXTRACT_DIR
 
     echo "we deploying $VERSION now!"
 
-if [[ "$(ls -A $PKG_DIR/frontend/)" ]]; then
+#ssh'ing into machines and then extractin em there
+
     echo "hold up we deployin' to frontend O_O"
-    rsync -avz $PKG_DIR/frontend/ $FE_USER@$FE_IP:$FE_PATH/
-else
-    echo "ok frontend had nothing lmao"
-fi
+    scp $EXTRACT_DIR/frontend.tar.gz $FE_USER@$FE_IP:/tmp/
+    ssh $FE_USER@$FE_IP "tar -xzf /tmp/frontend.tar.gz -C $FE_PATH"
 
-if [[ "$(ls -A $PKG_DIR/dmz/)" ]]; then
     echo "ok now we deployin' to dmz"
-    rsync -avz $PKG_DIR/dmz/ $DMZ_USER@$DMZ_IP:$DMZ_PATH/
-else
-    echo "dmz had nothin'"
-fi
+    scp $EXTRACT_DIR/dmz.tar.gz $DMZ_USER@$DMZ_IP:/tmp/
+    ssh $DMZ_USER@$DMZ_IP "tar -xzf /tmp/dmz.tar.gz -C $DMZ_PATH"
 
-if [[ "$(ls -A $PKG_DIR/db/)" ]]; then
+
     echo "last but not least we deployin' to dat db fr"
-    rsync -avz $PKG_DIR/db/ $DB_USER@$DB_IP:$DB_PATH/
-else
-    echo "db got no money (no updates)"
-fi
+    scp $EXTRACT_DIR/db.tar.gz $DB_USER@$DB_IP:/tmp/
+    ssh $DB_USER@$DB_IP "tar -xzf /tmp/db.tar.gz -C $DB_PATH"
 
 echo $VERSION > $CURRENT
 echo "mk $VERSION has been deployed"
@@ -65,30 +66,31 @@ elif [ "$ACTION" == "rollback" ]; then
     exit 1
     fi
 
-    PKG_DIR=$PACKAGE_DIR/$VERSION
-    if [ ! -d "$PKG_DIR" ]; then
-        echo "version $VERSION not found!"
+#similar to deploy
+    PKG_TAR=$PACKAGE_DIR/$VERSION.tar.gz
+
+     if [ ! -f "$PKG_TAR" ]; then
+        echo "version $VERSION not found lols"
         exit 1
     fi
 
+     EXTRACT_DIR=/tmp/deploy_$VERSION
+        mkdir -p $EXTRACT_DIR
+        tar -xzf $PKG_TAR -C $EXTRACT_DIR
+
     echo "we are rolling back to $VERSION"
-    if [[ "$(ls -A $PKG_DIR/frontend/)" ]]; then
-        rsync -avz $PKG_DIR/frontend/ $FE_USER@$FE_IP:$FE_PATH/
-    else
-        echo "frontend nothing to rollback"
-    fi
 
-    if [[ "$(ls -A $PKG_DIR/dmz/)" ]]; then
-        rsync -avz $PKG_DIR/dmz/ $DMZ_USER@$DMZ_IP:$DMZ_PATH/
-    else
-        echo "dmz had nothin'"
-    fi
+    echo "fixin frontned"
+    scp $EXTRACT_DIR/frontend.tar.gz $FE_USER@$FE_IP:/tmp/
+    ssh $FE_USER@$FE_IP "tar -xzf /tmp/frontend.tar.gz -C $FE_PATH"
 
-    if [[ "$(ls -A $PKG_DIR/db/)" ]]; then
-        rsync -avz $PKG_DIR/db/ $DB_USER@$DB_IP:$DB_PATH/
-    else
-        echo "db had no money (nothing to rollback)"
-    fi
+    echo "fixin dat dmz"
+    scp $EXTRACT_DIR/dmz.tar.gz $DMZ_USER@$DMZ_IP:/tmp/
+    ssh $DMZ_USER@$DMZ_IP "tar -xzf /tmp/dmz.tar.gz -C $DMZ_PATH"
+
+    echo "time to fix db."
+    scp $EXTRACT_DIR/db.tar.gz $DB_USER@$DB_IP:/tmp/
+    ssh $DB_USER@$DB_IP "tar -xzf /tmp/db.tar.gz -C $DB_PATH"
 
     echo $VERSION > $CURRENT
     echo "we have just rolled back to $VERSION"
@@ -96,3 +98,4 @@ elif [ "$ACTION" == "rollback" ]; then
 else
     echo "usage: ./deploy.sh [deploy|bad|rollback] <version>"
 fi
+
