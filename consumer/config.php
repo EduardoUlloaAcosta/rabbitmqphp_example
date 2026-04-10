@@ -1,7 +1,7 @@
 <?php
 //Brian Patoilo 2/11/26 Written to define things for project
 
-define('RABBITMQ_HOST', '100.84.167.48');
+define('RABBITMQ_HOST', '100.71.114.73');
 define('RABBITMQ_PORT', 5672);
 define('RABBITMQ_USER', 'admin');
 define('RABBITMQ_PASS', '123');
