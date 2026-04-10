@@ -26,7 +26,7 @@ echo "Waiting for messages";
 
 
 $callback = function ($msg) {
-	echo " [x] Recieved:" . $msg->body . "\n";
+	echo "Recieved:" . $msg->body . "\n";
 	$data = json_decode($msg->body, true);
 
 	if ($data === null) {
@@ -69,6 +69,10 @@ $callback = function ($msg) {
             case 'remove_from_dashboard':
                 $response = handleRemoveFromDashboard($data);
                 break;
+            case 'get_recommendations': // recommendations caller 3/5 brian
+                $response = handleGetRecommendations($data);
+                break;
+
 
 
             // add cases here when make more features
@@ -77,14 +81,41 @@ $callback = function ($msg) {
             //     $response = handleGetProfile($data);
             //     break;
 
+			 //stefan - 3/3/26 - need to make functionality for userProfile
+            case 'update_user_profile':
+                $response = handleUpdateUserProfile($data);
+                break;
+            //case for getting user Profile
+            case 'get_user_profile':
+                $response = handleGetUserProfile($data);
+                break;
+			case 'get_user_diet': //added to get diet
+			    $response = handleGetUserDiet($data);
+			    break;
+			case 'update_user_diet':
+			    $response = handleUpdateUserDiet($data);
+			    break;
+			case 'delete_user_diet':
+			    $response = handleDeleteUserDiet($data);
+			    break;
+            //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate' //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u' . DB_USER '-p' . DB_PASS '' . DB_NAME);
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
+
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
-                echo " [!] Unknown type: $type\n";
+                echo " Unknown type: $type\n";
                 break;
         }
     }
 
-    echo " [x] Response: " . json_encode($response) . "\n\n";
+    echo "Response: " . json_encode($response) . "\n\n";
 
     if ($msg->has('reply_to') && $msg->has('correlation_id')) {
         $replyMsg = new AMQPMessage(
@@ -98,7 +129,7 @@ $callback = function ($msg) {
             $msg->get('reply_to')
         );
 
-        echo " [x] Reply sent to: " . $msg->get('reply_to') . "\n";
+        echo "Reply sent to: " . $msg->get('reply_to') . "\n";
     }
     $msg->ack();
 };

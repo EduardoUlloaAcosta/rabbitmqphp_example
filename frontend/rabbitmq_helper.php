@@ -18,7 +18,7 @@ function sendRequest($data, $timeout = 10) {
             RABBITMQ_VHOST
         );
         $channel = $connection->channel();
-        list($replyQueue, ,) = $channel->queue_declare("", false, false, true, false);
+        list($replyQueue, ,) = $channel->queue_declare("", false, false, true, false); //creates a queue to listen for a reply
         $response = null;
         $correlationId = uniqid('', true);
 
