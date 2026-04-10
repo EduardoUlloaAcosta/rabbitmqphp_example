@@ -98,6 +98,15 @@ $callback = function ($msg) {
 			case 'delete_user_diet':
 			    $response = handleDeleteUserDiet($data);
 			    break;
+            //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate' //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u' . DB_USER '-p' . DB_PASS '' . DB_NAME);
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
 
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
