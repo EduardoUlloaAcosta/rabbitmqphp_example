@@ -83,3 +83,44 @@ body {
   align-items: center;
   padding: 20px;
 }
+
+
+/*Figure out something for responsive design (Stefan 4/1/26)*/
+/*uhhhhhhh make a mobile options button that can display based on screen size,  @media is a real life thing*/
+
+.mobile-menu-button{
+  display:none
+  flex-direction: none
+  cursor: pointer
+  gap:5x
+
+}
+
+.mobile-menu-button span{
+  width: 25px
+  height: 4px
+  background: black
+}
+
+@media (max-width: 768px){
+/*  depending on the size of the screen the whole thing will start
+ *so its gonna be between tablet and phone size...ish  */
+  .media-menu-button{
+    display: flex;
+  }
+
+  .headerMain .nav-links
+    /*   dont want links to pop up without the menu bar   */
+    flex-direction:column;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #1f3d36;
+    gap: 1rem;
+
+  }
+  .headerMain .nav-links.open{
+    display: flex;
+  }
+}
+

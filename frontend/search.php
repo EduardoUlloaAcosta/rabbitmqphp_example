@@ -8,6 +8,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 ?>
 <!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="searchstyle.css" />
+    <link rel="stylesheet" href="global.css" />
+</head>
 <div class="headerMain">
     <header>
         <nav>
@@ -21,6 +26,10 @@ if (!isset($_SESSION['user_id'])) {
                 <li><a href="dashboard.php">Dashboard</a></li>
 
             </ul>
+                    <div class="mobile-menu-button">
+    <span></span><span></span><span></span>
+    </div>
+
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -75,3 +84,4 @@ if (!isset($_SESSION['user_id'])) {
   ?>
 
 </div>
+</html>

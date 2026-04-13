@@ -35,7 +35,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 <style>
     body {
         margin: 0;
-        height: 100vh;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -44,7 +44,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .box {
         width: 800px;
-        height: 700px;
+        height: auto;
         background-color: rgb(255, 255, 255);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -53,7 +53,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .small-box {
         width: 400px;
-        height: 60px;
+        height: auto;
         background-color: rgb(116, 198, 0);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -65,7 +65,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
      /* progress is gonna get changes out cuz
     gonna need to make a variable
-    that will work out the calulation for it */
+    that will work out the calulation for it -Stefan */
     .progress-bar {
       --progress: 65;
       width: 200px;
@@ -109,6 +109,10 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
             </ul>
+                           <div class="mobile-menu-button">
+    <span></span><span></span><span></span>
+    </div>
+
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -132,10 +136,13 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
     <small>/ <?= $calorieGoal ?> kcal</small>
 </div>
 
-
-
-
 </div>
+
+<script>
+ document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+ </script>
 
 
 </body>

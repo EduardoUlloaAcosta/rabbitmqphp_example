@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <style>
     .box {
         width: 800px;
-        height: 700px;
+        height: auto;
         background-color: rgb(255, 255, 255);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .username-box{
         width: 40px;
-        height: 80px;
+        height: auto;
         background-color: rgb(115, 255, 0);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .small-box{
         width: 400px;
-        height: 60px;
+        height: auto;
         background-color: rgb(116, 198, 0);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -115,9 +115,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
+                  <div class="mobile-menu-button">
+    <span></span><span></span><span></span>
+    </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
+
+
         </nav>
     </header>
 </div>
@@ -148,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Vegetarian" <?= ($currentDiet === 'Vegetarian') ? 'selected' : '' ?>>Vegetarian</option>
             <option value="High Protein" <?= ($currentDiet === 'High Protein') ? 'selected' : '' ?>>High Protein</option>
             <option value="No Red Meat" <?= ($currentDiet === 'No Red Meat') ? 'selected' : '' ?>>No Red Meat</option>
+<!--   joking......           -->
             <option value="Chud" <?= ($currentDiet === 'Chud') ? 'selected' : '' ?>>Chud</option>
         </select>
     </div>
@@ -183,6 +189,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     heightInput.addEventListener('input', calcBMI);
     weightInput.addEventListener('input', calcBMI);
 </script>
+
+<script>
+ document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+ </script>
 
 </body>
 </html>

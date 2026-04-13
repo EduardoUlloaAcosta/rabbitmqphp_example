@@ -57,6 +57,9 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
+            <div class"mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -155,5 +158,10 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
         window.location.href = 'dashboard.php?date=' + this.value;
     });
 </script>
+<script> //stefan - javascript for navlinks for mobile menu (if u see this ill buy the whole group pizza from dominos)
+ document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+ </script>
 </body>
 </html>
