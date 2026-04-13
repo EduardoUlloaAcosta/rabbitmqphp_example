@@ -99,6 +99,20 @@ $callback = function ($msg) {
 			    $response = handleDeleteUserDiet($data);
 			    break;
 
+                //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate': //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u testUser -p123 meal_planner');
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
+
+            case 'add_custom_meal':
+                $response = CustomMealMaker($data);
+                break;
+
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
                 echo " Unknown type: $type\n";
@@ -106,7 +120,9 @@ $callback = function ($msg) {
         }
     }
 
-    echo "Response: " . json_encode($response) . "\n\n";
+    if($type != 'db_replicate'){
+        echo "Response: " . json_encode($response) . "\n\n";
+    }
 
     if ($msg->has('reply_to') && $msg->has('correlation_id')) {
         $replyMsg = new AMQPMessage(
