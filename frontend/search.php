@@ -46,6 +46,9 @@ if (!isset($_SESSION['user_id'])) {
         />
         <button type="submit">Search</button>
     </form>
+<!--adding button to get to add meal page, brian  -->
+    <a href="addMeal.php" class="add-meal-btn">Dont see what you need? Add custom meal</a>
+    <link rel="stylesheet" href="searchstyle.css" />
 </div>
 <!-- 2/23 added by ainesh, changed on 2/25 by ainesh -->
 <div class="mealsGrid">

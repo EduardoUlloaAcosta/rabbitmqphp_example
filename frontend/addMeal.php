@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'instructions' => $_POST['instructions'],
         'ingredients' => $_POST['ingredients'],
         'calories' => $_POST['calories'],
-        'image_url' => !empty($_POST['image_url']) ? $_POST['image_url'] : 'https://via.placeholder.com/300x300?text=No+Image'#searched up a placeholder link to use
+        'image_url' => !empty($_POST['image_url']) ? $_POST['image_url'] : 'no-image.png' #placeholder link didn't work so i am just saving a local file called no-image.png
     ]);
 
     if ($response['success']) {
@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Add Custom Meal</title>
     <link rel="stylesheet" href="searchstyle.css" />
+    <link rel="stylesheet" href="global.css" />
 </head>
 <body>
 <div class="headerMain">
@@ -50,6 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
+            <div class="mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -129,21 +133,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea name="ingredients" required placeholder="ex: 2 cups rice, 1 lb chicken, 1 tsp salt"></textarea>
         </label>
 
-        <label>Instructions:
+        <label>Instructions to make meal:
             <textarea name="instructions" required placeholder="write out the steps"></textarea>
         </label>
 
-        <label>Calories:
+        <label>Calories in meal:
             <input type="number" name="calories" required placeholder="enter calorie count">
         </label>
 
-        <label>Image URL (optional):
+        <label>Image URL !!!WARNING THIS HAS TO BE AN ACTUAL IMAGE LINK, not an image file!!! (optional):
             <input type="text" name="image_url" placeholder="paste image link or leave blank">
         </label>
 
         <button type="submit">Add Meal</button>
     </form>
 </div>
-
+<script>
+    document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+</script>
+<!-- repsonsive design script -->
 </body>
 </html>
