@@ -643,7 +643,7 @@ function CustomMealMaker($data) {
     }
 
     $stmt = $db->prepare("insert into meals (is_api, created_by, name, category, area, instructions, ingredients, image_url, calories) values (0, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("isssssd", $user_id, $name, $category, $area, $instructions, $ingredients, $image_url, $calories);
+    $stmt->bind_param("issssssd", $user_id, $name, $category, $area, $instructions, $ingredients, $image_url, $calories);
 
 
     if ($stmt->execute()) {
