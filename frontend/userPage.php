@@ -115,14 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
-                  <div class="mobile-menu-button">
-    <span></span><span></span><span></span>
-    </div>
+            <div class="mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
-
-
         </nav>
     </header>
 </div>
@@ -153,7 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Vegetarian" <?= ($currentDiet === 'Vegetarian') ? 'selected' : '' ?>>Vegetarian</option>
             <option value="High Protein" <?= ($currentDiet === 'High Protein') ? 'selected' : '' ?>>High Protein</option>
             <option value="No Red Meat" <?= ($currentDiet === 'No Red Meat') ? 'selected' : '' ?>>No Red Meat</option>
-<!--   joking......           -->
             <option value="Chud" <?= ($currentDiet === 'Chud') ? 'selected' : '' ?>>Chud</option>
         </select>
     </div>
@@ -191,11 +188,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
 <script>
- document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+    document.querySelector('.mobile-menu-button').addEventListener('click', () => {
         document.querySelector('.nav-links').classList.toggle('open');
     });
- </script>
+</script>
 
 </body>
 </html>
-

@@ -89,29 +89,32 @@ body {
 /*uhhhhhhh make a mobile options button that can display based on screen size,  @media is a real life thing*/
 
 .mobile-menu-button{
-  display:none
-  flex-direction: none
-  cursor: pointer
-  gap:5x
+  display:none;
+  flex-direction: column;
+  cursor: pointer;
+  gap:5px;
 
 }
 
 .mobile-menu-button span{
-  width: 25px
-  height: 4px
-  background: black
+  display:block;
+  width: 25px;
+  height: 4px;
+  background: white;
 }
 
 @media (max-width: 768px){
 /*  depending on the size of the screen the whole thing will start
  *so its gonna be between tablet and phone size...ish  */
-  .media-menu-button{
+  .mobile-menu-button{
     display: flex;
   }
 
-  .headerMain .nav-links
+  .headerMain .nav-links{
     /*   dont want links to pop up without the menu bar   */
+    display:none;
     flex-direction:column;
+    position:absolute;
     top: 60px;
     left: 0;
     width: 100%;

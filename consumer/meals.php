@@ -294,7 +294,11 @@ function handlePostReview($data){
 
         $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text)
         VALUES (?, ?, ?, ?)
+<<<<<<< HEAD
         ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_text = VALUES(review_text)");
+=======
+        ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_text = VALUES(review_text)"); //fix reviews duplicate error that crashes rabbitmq 3/4/26 brian
+>>>>>>> master
         $stmt->bind_param("iiis", $user_id, $meal_id, $rating, $review_text);
 
         if($stmt->execute()){
@@ -433,6 +437,7 @@ function handleRemoveFromDashboard($data) {
     }
 }
 
+<<<<<<< HEAD
 // Stefan - 3/3 - all this stuff is for userProfile, the frontend of it is in userPage.php
 function handleUpdateUserProfile($data){
     $user_id = $data['user_id'] ?? null;
@@ -440,6 +445,75 @@ function handleUpdateUserProfile($data){
     $current_weight = $data['current_weight'] ?? null;
     $goal_weight = $data['goal_weight'] ?? null;
 
+=======
+//test function added 3/5 for recommendations on dashboard Brian Patoilo
+function handleGetRecommendations($data) {
+    $user_id = $data['user_id'];
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed: ' . $db->connect_error];
+    }
+
+    //adding diet retrieval for meal recommendations
+    $dietStuff = $db->prepare("SELECT diet_name FROM user_diets WHERE user_id = ?");
+    $dietStuff->bind_param("i", $user_id);
+    $dietStuff->execute();
+    $dietResult = $dietStuff->get_result();
+
+    $categories = [];
+    while ($row = $dietResult->fetch_assoc()) {
+        $mapped = getDietCategories($row['diet_name']);
+        $categories = array_merge($categories, $mapped);
+    }
+
+    $categories = array_unique($categories);
+    $dietStuff->close();
+
+     if (!empty($categories)) {
+        $placeholders = implode(',', array_fill(0, count($categories), '?'));
+        $sql = "SELECT id, name FROM meals WHERE category IN ($placeholders) ORDER BY RAND() LIMIT 3";
+        $types = str_repeat('s', count($categories));
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param($types, ...$categories);
+    } else {
+        $stmt = $db->prepare("SELECT id, name FROM meals ORDER BY RAND() LIMIT 3"); //reuse random logic for people who have not selected a diet
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meals = [];
+    while ($row = $result->fetch_assoc()) {
+        $meals[] = $row;
+    }
+
+    $stmt->close();
+    $db->close();
+
+    return ['success' => true, 'meals' => $meals];
+}
+
+// adding funtion 3/9 for diet preferences. I looked up how to do this and I found mapping the categories of the meals to a specific diary
+function getDietCategories($diet_name) {
+    $map = [
+        'Vegan'        => ['Vegan'],
+        'Vegetarian'   => ['Vegetarian', 'Vegan'],
+        'High Protein' => ['Chicken', 'Beef', 'Lamb', 'Seafood', 'Goat', 'Pork'],
+        'No Red Meat'  => ['Chicken', 'Seafood', 'Vegetarian', 'Vegan'],
+        'Chud'         => ['Dessert', 'Miscellaneous', 'Pasta', 'Side', 'Starter', 'Breakfast'],
+    ];
+
+    return $map[$diet_name] ?? [];
+}
+// Stefan - 3/3 - all this stuff is for userProfile, the frontend of it is in userPage.php
+function handleUpdateUserProfile($data){
+    $user_id = $data['user_id'] ?? null;
+    $height = $data['height'] ?? null;
+    $current_weight = $data['current_weight'] ?? null;
+    $goal_weight = $data['goal_weight'] ?? null;
+
+>>>>>>> master
     if (!$user_id) {
         return ['success' => false, 'message' => 'missing user_id'];
     }

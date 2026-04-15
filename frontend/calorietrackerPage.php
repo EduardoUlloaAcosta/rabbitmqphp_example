@@ -29,6 +29,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 <html>
 
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="searchstyle.css">
 <link rel="stylesheet" href="global.css">
 
@@ -44,6 +45,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .box {
         width: 800px;
+        max-width:800px
         height: auto;
         background-color: rgb(255, 255, 255);
         border: 2px solid rgb(0, 0, 0);
@@ -53,6 +55,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .small-box {
         width: 400px;
+        max-width:440px;
         height: auto;
         background-color: rgb(116, 198, 0);
         border: 2px solid rgb(0, 0, 0);
@@ -105,14 +108,13 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
             </div>
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
-                <li><a href="profile.html">Profile</a></li>
+                <li><a href="userPage.php">Profile</a></li>
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
-                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
-                           <div class="mobile-menu-button">
-    <span></span><span></span><span></span>
-    </div>
-
+            <div class="mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
