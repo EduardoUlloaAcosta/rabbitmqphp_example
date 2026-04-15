@@ -81,7 +81,7 @@ $callback = function ($msg) {
             //     $response = handleGetProfile($data);
             //     break;
 
-			 //stefan - 3/3/26 - need to make functionality for userProfile
+            //stefan - 3/3/26 - need to make functionality for userProfile
             case 'update_user_profile':
                 $response = handleUpdateUserProfile($data);
                 break;

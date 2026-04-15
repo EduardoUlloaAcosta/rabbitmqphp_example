@@ -5,7 +5,5 @@ define('RABBITMQ_PORT', 5672);
 define('RABBITMQ_USER', 'admin');
 define('RABBITMQ_PASS', '123');
 define('RABBITMQ_VHOST', '/');
-
-
 define('QUEUE_NAME', 'db_queue');
 ?>
