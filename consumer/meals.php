@@ -642,7 +642,7 @@ function CustomMealMaker($data) {
         return ['success' => false, 'message' => 'db connection failed'];
     }
 
-    $stmt = $db-.prepare"insert into meals (is_api, created_by, name, category, area, instructions, ingredients, image_url, calories) values (0, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $db->prepare("insert into meals (is_api, created_by, name, category, area, instructions, ingredients, image_url, calories) values (0, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("isssssd", $user_id, $name, $category, $area, $instructions, $ingredients, $image_url, $calories);
 
 
