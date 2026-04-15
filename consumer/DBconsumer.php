@@ -101,6 +101,8 @@ $callback = function ($msg) {
             //added on 4/10/2026 by ainesh, 'db_replicate' case
             case 'db_replicate': //cronjob on hot standby will call this for db dump
                 $dump = shell_exec('mysqldump -u testUser -p123 meal_planner');
+                //echo "dump result: " . ($dump ? "got data" : "empty/null") . "\n";
+                //this was debug code bc dbreplicate kept crying about sql syntax when i used the constants. so i just hardcoded the username and password and its working now that way. dunno why it was crying before lol
                 if ($dump){
                     $response = ['success' => true, 'dump' => $dump];
                 } else {
@@ -115,7 +117,9 @@ $callback = function ($msg) {
         }
     }
 
-    echo "Response: " . json_encode($response) . "\n\n";
+    if ($type != 'db_replicate'){
+        echo "Response: " . json_encode($response) . "\n\n";
+    }
 
     if ($msg->has('reply_to') && $msg->has('correlation_id')) {
         $replyMsg = new AMQPMessage(
