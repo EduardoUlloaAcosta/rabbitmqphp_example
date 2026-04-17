@@ -22,7 +22,7 @@ function handleRequest($request)
     }
 
     //this part is for searching meals
-    if ($request['type'] === "search_meal"){
+    if ($request['type'] === "search_meal_by_letter"){
 
         $query = $request['query'] ?? "chicken"; //chicken is default
 
