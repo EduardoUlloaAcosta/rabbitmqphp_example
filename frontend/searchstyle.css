@@ -245,3 +245,13 @@ body {
   margin-bottom: 10px;
 }
 
+.add-meal-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: grey;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+

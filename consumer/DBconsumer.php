@@ -26,7 +26,7 @@ echo "Waiting for messages";
 
 
 $callback = function ($msg) {
-	echo " [x] Recieved:" . $msg->body . "\n";
+	echo "Recieved:" . $msg->body . "\n";
 	$data = json_decode($msg->body, true);
 
 	if ($data === null) {
@@ -98,15 +98,43 @@ $callback = function ($msg) {
 			case 'delete_user_diet':
 			    $response = handleDeleteUserDiet($data);
 			    break;
+            //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate': //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u testUser -p123 meal_planner');
+                //echo "dump result: " . ($dump ? "got data" : "empty/null") . "\n";
+                //this was debug code bc dbreplicate kept crying about sql syntax when i used the constants. so i just hardcoded the username and password and its working now that way. dunno why it was crying before lol
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
+
+                //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate': //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u testUser -p123 meal_planner');
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
+
+            case 'add_custom_meal':
+                $response = CustomMealMaker($data);
+                break;
 
             default:
                 $response = ['success' => false, 'message' => "Unknown request type: $type"];
-                echo " [!] Unknown type: $type\n";
+                echo " Unknown type: $type\n";
                 break;
         }
     }
 
-    echo " [x] Response: " . json_encode($response) . "\n\n";
+    if($type != 'db_replicate'){
+
+        echo "Response: " . json_encode($response) . "\n\n";
+    }
 
     if ($msg->has('reply_to') && $msg->has('correlation_id')) {
         $replyMsg = new AMQPMessage(
@@ -120,7 +148,7 @@ $callback = function ($msg) {
             $msg->get('reply_to')
         );
 
-        echo " [x] Reply sent to: " . $msg->get('reply_to') . "\n";
+        echo "Reply sent to: " . $msg->get('reply_to') . "\n";
     }
     $msg->ack();
 };
