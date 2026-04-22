@@ -40,7 +40,7 @@ require_once __DIR__ . '/rabbitmq_helper.php';
 <!-- Search box to search by username -->
 <div class="box">
     <h1>Search For User</h1>
-    <form method="GET" action="search.php">
+    <form method="GET" action="journey.php">
     <input
         type="text"
         name="query"

@@ -52,8 +52,6 @@ if (!isset($_SESSION['user_id'])) {
 </div>
 
 <!-- need to add a button that navs to journey.php Stefan 4/20 -->
-
-
 <div class="progress-jrny-btn">
 <a href = "journey.php" class= "jrny-button">Social Journeys (I know its ugly)</a>
 </div>
