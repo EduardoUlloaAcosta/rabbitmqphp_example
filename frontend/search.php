@@ -47,6 +47,15 @@ if (!isset($_SESSION['user_id'])) {
         <button type="submit">Search</button>
     </form>
 </div>
+
+<!-- need to add a button that navs to journey.php Stefan 4/20 -->
+
+
+<div class="progress-jrny-btn">
+<a href = "journey.php" class= "jrny-button">Social Journeys (I know its ugly)</a>
+</div>
+
+
 <!-- 2/23 added by ainesh, changed on 2/25 by ainesh -->
 <div class="mealsGrid">
   <?php

@@ -137,6 +137,9 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
     <?= $totalCalories ?>
     <small>/ <?= $calorieGoal ?> kcal</small>
 </div>
+<!-- ty Brian -->
+ <a href="journey.php" class="add-meal-btn">Social Progress</a>
+    <link rel="stylesheet" href="searchstyle.css" />
 
 </div>
 

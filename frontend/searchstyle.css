@@ -215,6 +215,15 @@ body {
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
 }
+/* this is the stuff for the journey button */
+.jrny-btn {
+  padding: 10px 24px;
+  background-color: #1f3d36;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+}
+
 
 .reviewSection {
   max-width: 700px;
