@@ -49,7 +49,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
         width: 800px;
         max-width:800px
         height: auto;
-        background-color: rgb(255, 255, 255);
+        background: linear-gradient(45deg, #fff6eb 0%, #bdf7d6 100%);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
         margin-top: 40px;
