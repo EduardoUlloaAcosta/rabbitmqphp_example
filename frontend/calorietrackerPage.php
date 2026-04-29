@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/rabbitmq_helper.php';
 
 $today = date('Y-m-d');
+
+//Gonna update this maybe ust make it so that users can set the calorie goal (4/22)
 $calorieGoal = 2000; //will change later to be entered by user
 
 $dashResponse = sendRequest([
@@ -68,7 +70,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
      /* progress is gonna get changes out cuz
     gonna need to make a variable
-    that will work out the calulation for it -Stefan */
+    that will work out the calculation for it -Stefan */
     .progress-bar {
       --progress: 65;
       width: 200px;

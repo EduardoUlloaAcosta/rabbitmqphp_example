@@ -69,7 +69,9 @@ body {
 }
 
 .box {
-  width: 700px;
+  max-width:700px
+  width:100%
+
 /* Stefan 4/12/26 - change height to auto so it switch whenver it needs to   */
   height: auto;
   background-color: rgb(255, 255, 255);
