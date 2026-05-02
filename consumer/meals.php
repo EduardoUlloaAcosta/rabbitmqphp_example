@@ -673,8 +673,9 @@ function handleSearchUser($data) {
         return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
     }
 //was doing where is name = before swapped it -Stefan
-    $stmt = $db->prepare("select username, current_weight, goal_weight, height from users where username = ?");
-    $stmt->bind_param("s", $username);
+    $searchTerm = '%' . $username . '%';
+    $stmt = $db->prepare("select username, current_weight, goal_weight, height from users where username LIKE ?");
+    $stmt->bind_param("s", $searchTerm);
     $stmt->execute();
     $result = $stmt->get_result();
     $profile= $result->fetch_assoc();
