@@ -662,7 +662,8 @@ function CustomMealMaker($data) {
 }
 //function to get stats for journey page - Added by Ben
 function handleSearchUser($data) {
-    $username = $data['username'] ?? '';
+    $username = $data['query'] ?? '';
+    var_dump($data);
     if (empty($username)) {
         return ['success' => false, 'message' => 'No search query provided'];
     }
@@ -682,7 +683,7 @@ function handleSearchUser($data) {
     $stmt->close();
     $db->close();
 
-    if (empty(!$profile)) {
+    if (!$profile) {
         return ['success' => false, 'message' => 'no user found: '];
     }
 
