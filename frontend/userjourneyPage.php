@@ -27,7 +27,7 @@ if (!isset($_SESSION['user_id'])) {
 
     .box {
         width: 800px;
-        height: 700px;
+        height: 500px;
         background-color: rgb(255, 255, 255);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -85,12 +85,11 @@ if (!isset($_SESSION['user_id'])) {
 <?php
 require_once __DIR__ . '/rabbitmq_helper.php';
 $query = $_GET['query'] ?? '';
-$profile =null;
+//IT FINALLY WORKS - Stefan/Ben
 
     if(!empty($query)){
-        $response = sendRequest(['type' => 'search_user_stats', 'username' => $query]);
-        var_dump($response);
-        $profile= $response['profile'] ?? null;
+        $response = sendRequest(['type' => 'search_user_stats', 'query' => $query]);
+        $profile = $response['profile'] ?? null;
     }
 
     if(!empty($profile)){?>
@@ -98,15 +97,15 @@ $profile =null;
         <p><b>Username:</b> <?= htmlspecialchars($profile['username'])?></p>
         </div>
         <div class="small-box">
-        <p><b>Username:</b> <?= htmlspecialchars($profile['height'])?>cm</p>
+        <p><b>height:</b> <?= htmlspecialchars($profile['height'])?>cm</p>
         </div>
         <div class="small-box">
-        <p><b>Username:</b> <?= htmlspecialchars($profile['current_weight'])?>lbs</p>
+        <p><b>current_weight:</b> <?= htmlspecialchars($profile['current_weight'])?>lbs</p>
         </div>
         <div class="small-box">
-        <p><b>Username:</b> <?= htmlspecialchars($profile['goal_weight'])?>lbs</p>
+        <p><b>goal_weight:</b> <?= htmlspecialchars($profile['goal_weight'])?>lbs</p>
         </div>
-<?php}
+<?php }
 ?>
 <!--spent like 3 hours somethings still broken...well the code it was and it's cuz i was missing a bracket on a line but trying to login and getting this
 https://100.100.135.97/index.html?error=Connection+error%3A+stream_socket_client%28%29%3A+Unable+to+connect+to+tcp%3A%2F%2F100.79.180.77%3A5672+%28Connection+timed+out%29
@@ -117,7 +116,6 @@ tried seeing if it was an apache issue so reset still doesnt work it didnt work
 
 The issue was in FEconfig needed to make the same changes the others to the RABBITMQ_HOST
 -->
-
 
 </body>
 </html>
