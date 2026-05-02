@@ -74,7 +74,6 @@ $callback = function ($msg) {
                 break;
 
 
-
             // add cases here when make more features
 			//example cases
             // case 'get_profile':
@@ -92,6 +91,10 @@ $callback = function ($msg) {
 			case 'get_user_diet': //added to get diet
 			    $response = handleGetUserDiet($data);
 			    break;
+            //type case for user search -  Added by Ben
+            case 'search_user_stats':
+                $response = handleSearchUser($data);
+
 			case 'update_user_diet':
 			    $response = handleUpdateUserDiet($data);
 			    break;

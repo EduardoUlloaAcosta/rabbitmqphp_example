@@ -660,38 +660,32 @@ function CustomMealMaker($data) {
 
 
 }
-
+//function to get stats for journey page - Added by Ben
 function handleSearchUser($data) {
-    $query = $data['query'] ?? '';
-    if (empty($query)) {
+    $username = $data['username'] ?? '';
+    if (empty($username)) {
         return ['success' => false, 'message' => 'No search query provided'];
     }
-    echo "Searching database for: $query\n";
+    echo "Searching database for: $username\n";
 
     $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if ($db->connect_error) {
         return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
     }
-
-    $searchTerm = '%' . $query . '%';
-    $stmt = $db->prepare("select userid, username, from users where name LIKE ?");
-    $stmt->bind_param("s", $searchTerm);
+//was doing where is name = before swapped it -Stefan
+    $stmt = $db->prepare("select username, current_weight, goal_weight, height from users where username = ?");
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    $users = [];
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
-    }
+    $profile= $result->fetch_assoc();
     $stmt->close();
     $db->close();
 
-    if (empty($users)) {
-        return ['success' => false, 'message' => 'SPEEEDD PLZZZZ: ' . $query];
+    if (empty(!$profile)) {
+        return ['success' => false, 'message' => 'no user found: '];
     }
 
-    echo " [*] Found " . count($meals) . " users in database\n";
-    return ['success' => true, 'users' => $users];
+    return ['success' => true, 'profile' => $profile];
 }
 
 ?>
