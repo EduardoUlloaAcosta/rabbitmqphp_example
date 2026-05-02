@@ -1,10 +1,11 @@
 <?php
+//created by ainesh - test file for both apis when making dmzworker.php
 header('Content-Type: application/json');
 require_once (__DIR__ . '/../rabbitMQLib.inc');
 
 $client = new rabbitMQClient("dmzRabbitMQ.ini", "dmz");
 
-$query = "beef";
+$query = "beef"; //hardcoded this query for testing
 
 //themealdb request
 $mealRequest = [
@@ -19,7 +20,7 @@ $fdcReq = [
     "type" => "fdc_search",
     "query" => $query
 ];
-
+//second api call. this is what helped me find the queue conflict!
 $fdcResponse = $client->send_request($fdcReq);
 
 echo json_encode([
