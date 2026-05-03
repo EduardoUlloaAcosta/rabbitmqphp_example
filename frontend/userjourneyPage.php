@@ -12,6 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 <html>
 
 <head>
+<meta name ="viewport" content ="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="searchstyle.css">
 <link rel="stylesheet" href="global.css">
 
@@ -116,6 +117,12 @@ tried seeing if it was an apache issue so reset still doesnt work it didnt work
 
 The issue was in FEconfig needed to make the same changes the others to the RABBITMQ_HOST
 -->
+<!--finishing touches  -->
+<script>
+    document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+</script>
 
 </body>
 </html>
