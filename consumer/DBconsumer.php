@@ -94,7 +94,7 @@ $callback = function ($msg) {
             //type case for user search -  Added by Ben
             case 'search_user_stats':
                 $response = handleSearchUser($data);
-
+				break;
 			case 'update_user_diet':
 			    $response = handleUpdateUserDiet($data);
 			    break;
