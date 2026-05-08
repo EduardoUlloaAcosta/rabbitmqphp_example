@@ -1,6 +1,9 @@
 <?php
 //created by ainesh 4/10/2026.
 //this will be run thru cronjob to pull db dump from main db
+
+//this file is completely useless now, lmao
+//i was told by kehoe we were supposed to do it through mysql. i thought we couldnt do that so thats why this is how i approached it first
 require_once __DIR__ . '/../consumer/vendor/autoload.php';
 require_once __DIR__ . '/../consumer/config.php';
 
@@ -41,10 +44,12 @@ while ($response === null){
 $channel->close();
 $connection->close();
 
+//receiving the sql dump and writing it to a tmp file to be imported
+//this simply stopped working at some point and i was not able to figure it out. also a big reason why i decided to switch using mysql's replication.
 if ($response['success'] && !empty($response['dump'])){
     $tmp = '/tmp/dbdump.sql';
     file_put_contents($tmp, $response['dump']);
-    shell_exec('mysql -u ' . DB_USER . ' -p' . DB_PASS . ' ' . DB_NAME . ' < ' . $tmp);
+    shell_exec('mysql -u testUser -p123 meal_planner <' . $tmp);
     echo "db updated";
     } else {
         echo "db update failed: " . ($response['message'] ?? 'unknown error') . "\n";
