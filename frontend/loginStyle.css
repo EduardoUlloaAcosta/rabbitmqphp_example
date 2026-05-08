@@ -14,21 +14,26 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
+
 }
+
 .avatar {
-  width: 48px; 
+  width: 200px;
   height: auto;
   position: relative;
   right: -290px;
-  top:38;
+  top:70;
   transform: translateY(-50%);
 }
 .login-container {
   background: white;
   padding: 40px;
+  height:500px;
+  border: 2px solid rgba(255,255,255,.4);
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 100%;
+
+  box-shadow:  30px 30px 0 rgba(0, 0, 0, 0.6);
+  width: 420px;
   max-width: 400px;
 }
 
@@ -36,8 +41,14 @@ h1 {
   text-align: center;
   color: #333;
   margin-bottom: 30px;
-  font-size: 28px;
+  font-size: 32px;
+  letter-spacing: -0.02m;
+
+
 }
+
+
+
 
 label {
   display: block;
@@ -59,7 +70,7 @@ input {
   top: 2000px;
   width: 100%;
   padding: 12px;
-  background: #bdf7d6;
+  background:  linear-gradient(45deg, #fff6eb 0%, #bdf7d6 100%);
   color: rgb(0, 0, 0);
   border: none;
   border-radius: 5px;
@@ -82,7 +93,7 @@ input {
 
 .forgotpwd-container {
   border: 1px solid #333;
-  background: white;
+  background:  linear-gradient(45deg, #fff6eb 0%, #bdf7d6 100%);
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);

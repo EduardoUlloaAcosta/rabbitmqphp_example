@@ -26,7 +26,7 @@ function handleRegister($data) {
         $db = getDB();
 
         //check username
-        $checkStmt = $db->prepare("SELECT user_id FROM users WHERE username = ?");
+        $checkStmt = $db->prepare("select user_id from users where username = ?");
         $checkStmt->bind_param("s", $data['username']);
         $checkStmt->execute();
         $checkResult = $checkStmt->get_result();
@@ -42,7 +42,7 @@ function handleRegister($data) {
         $checkStmt->close();
 
         // check email
-        $checkEmail = $db->prepare("SELECT user_id FROM users WHERE email = ?");
+        $checkEmail = $db->prepare("select user_id from users where email = ?");
         $checkEmail->bind_param("s", $data['email']);
         $checkEmail->execute();
         $emailResult = $checkEmail->get_result();
@@ -59,7 +59,7 @@ function handleRegister($data) {
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
         //add the user to the db
-        $stmt = $db->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+        $stmt = $db->prepare("insert into users (username, password, email) values (?, ?, ?)");
         $stmt->bind_param("sss", $data['username'], $hashedPassword, $data['email']);
         if ($stmt->execute()) {
             $response = [
@@ -70,7 +70,7 @@ function handleRegister($data) {
         } else {
             $response = [
                 'success' => false,
-                'message' => 'Registration failed: ' . $stmt->error
+                'message' => 'Registration no gud: ' . $stmt->error
             ];
         }
 
