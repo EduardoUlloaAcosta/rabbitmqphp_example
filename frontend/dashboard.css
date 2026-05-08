@@ -1,5 +1,4 @@
 h1{
-
 text-align: center;
   width: 100%;
   display: block;
@@ -22,14 +21,12 @@ h2{
   gap: 16px;
   padding: 20px;
 }
-
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: linear-gradient(45deg, #f8fffb 0%, #bdf7d6 100%);
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* add this */
+  flex-direction: column;
   align-items: center;
   padding: 20px;
 }
@@ -50,6 +47,7 @@ body {
 
 #dashboard-date:hover {
   border-color: #5fb082;
+  
 }
 .container {
   background-color: white;
