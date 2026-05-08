@@ -66,10 +66,13 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
+
 }
 
 .box {
-  width: 700px;
+  max-width:700px
+  width:100%
+
 /* Stefan 4/12/26 - change height to auto so it switch whenver it needs to   */
   height: auto;
   background-color: rgb(255, 255, 255);
@@ -215,6 +218,15 @@ body {
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
 }
+/* this is the stuff for the journey button */
+.jrny-btn {
+  padding: 10px 24px;
+  background-color: #1f3d36;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+}
+
 
 .reviewSection {
   max-width: 700px;

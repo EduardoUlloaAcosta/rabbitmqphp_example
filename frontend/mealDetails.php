@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name ="viewport" content ="width=device-width, initial-scale=1.0">
     <title><?= $meal ? htmlspecialchars($meal['name']) : 'Meal Details' ?></title>
     <link rel="stylesheet" href="searchstyle.css" />
 </head>
