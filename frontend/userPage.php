@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 
 <head>
+<meta name ="viewport" content ="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="searchstyle.css">
 <link rel="stylesheet" href="global.css">
 
@@ -176,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const heightInput = document.querySelector('input[name="height"]');
     const weightInput = document.querySelector('input[name="current_weight"]');
 
-    function calcBMI() { //looked up bmi calculator logic to work with javascript
+    function calcBMI() { //looked up how BMI is actually calculated like logically then to work with javascript
         const h = parseFloat(heightInput.value);
         const w = parseFloat(weightInput.value);
         if (!h || !w) return;

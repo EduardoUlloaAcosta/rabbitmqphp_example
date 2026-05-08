@@ -658,7 +658,36 @@ function CustomMealMaker($data) {
         return ['succes' => false, 'mesage' => 'failed to add'];
     }
 
-#end of function
+
+}
+//function to get stats for journey page - Added by Ben
+function handleSearchUser($data) {
+    $username = $data['query'] ?? '';
+    var_dump($data);
+    if (empty($username)) {
+        return ['success' => false, 'message' => 'No search query provided'];
+    }
+    echo "Searching database for: $username\n";
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
+    }
+//was doing where is name = before swapped it -Stefan
+    $searchTerm = '%' . $username . '%';
+    $stmt = $db->prepare("select username, current_weight, goal_weight, height from users where username LIKE ?");
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile= $result->fetch_assoc();
+    $stmt->close();
+    $db->close();
+
+    if (!$profile) {
+        return ['success' => false, 'message' => 'no user found: '];
+    }
+
+    return ['success' => true, 'profile' => $profile];
 }
 
 ?>
