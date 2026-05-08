@@ -63,11 +63,13 @@ if (!isset($_SESSION['user_id'])) {
   <?php
   require_once __DIR__ . '/rabbitmq_helper.php';
     $query = $_GET['query'] ?? '';
+    //searches by query if user types something in, load all meals by default otherwise
     if(!empty($query)){
         $response = sendRequest(['type' => 'search_meal', 'query' => $query]);
     } else {
         $response = sendRequest(['type' => 'get_meals']);
     }
+    //making a 'card' for every meal
   if ($response && $response['success'] && !empty($response['meals'])){
     foreach ($response['meals'] as $meal){
       echo '<div class="mealCard">';
