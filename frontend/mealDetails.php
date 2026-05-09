@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name ="viewport" content ="width=device-width, initial-scale=1.0">
     <title><?= $meal ? htmlspecialchars($meal['name']) : 'Meal Details' ?></title>
     <link rel="stylesheet" href="searchstyle.css" />
 </head>
@@ -77,10 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) 
     <?php if (!empty($meal['ingredients'])): ?>
         <ul class="ingredients-list">
             <?php
+            //ainesh comment (5/8/26) - i split the ingredients string into a list
             $ingredients = explode(', ', $meal['ingredients']);
             foreach ($ingredients as $ing):
                 $ing = trim($ing);
-                if ($ing !== ''):
+                if ($ing !== ''): //ainesh comment - just skip empty entries
             ?>
                 <li><?= htmlspecialchars($ing) ?></li>
             <?php
@@ -131,13 +133,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_dashboard'])) 
         <textarea name="review_text" placeholder="Yay or Nay?"></textarea>
         <button type="submit">Submit Review</button>
     </form>
-
+    <!-- ainesh (5/8/26) placeholder for if reviews dont exist! -->
     <?php if (empty($reviews)): ?>
         <p>No reviews yet. Be the first!</p>
     <?php else: ?>
         <?php foreach ($reviews as $review): ?>
         <div class="reviewCard">
             <strong><?= htmlspecialchars($review['username']) ?></strong>
+            <!-- ainesh (5/8/26) looked up how to do this - the unicode star looked pretty so i copy and pasted ★ and ☆ from online lol -->
             <span><?= str_repeat('★', $review['rating']) ?><?= str_repeat('☆', 5 - $review['rating']) ?></span>
             <p><?= htmlspecialchars($review['review_text']) ?></p>
             <small><?= $review['created_at'] ?></small>

@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/rabbitmq_helper.php';
 
 $today = date('Y-m-d');
+
+//Gonna update this maybe ust make it so that users can set the calorie goal (4/22)
 $calorieGoal = 2000; //will change later to be entered by user
 
 $dashResponse = sendRequest([
@@ -29,13 +31,14 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 <html>
 
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="searchstyle.css">
 <link rel="stylesheet" href="global.css">
 
 <style>
     body {
         margin: 0;
-        height: 100vh;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -44,8 +47,9 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .box {
         width: 800px;
-        height: 700px;
-        background-color: rgb(255, 255, 255);
+        max-width:800px
+        height: auto;
+        background: linear-gradient(45deg, #fff6eb 0%, #bdf7d6 100%);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
         margin-top: 40px;
@@ -53,7 +57,8 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
     .small-box {
         width: 400px;
-        height: 60px;
+        max-width:440px;
+        height: auto;
         background-color: rgb(116, 198, 0);
         border: 2px solid rgb(0, 0, 0);
         padding: 10px;
@@ -65,7 +70,7 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
 
      /* progress is gonna get changes out cuz
     gonna need to make a variable
-    that will work out the calulation for it */
+    that will work out the calculation for it -Stefan */
     .progress-bar {
       --progress: 65;
       width: 200px;
@@ -109,6 +114,9 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
                 <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
+            <div class="mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -131,11 +139,17 @@ $progress = $calorieGoal > 0 ? min(round(($totalCalories / $calorieGoal) * 100),
     <?= $totalCalories ?>
     <small>/ <?= $calorieGoal ?> kcal</small>
 </div>
-
-
-
+<!-- ty Brian -->
+ <a href="journey.php" class="add-meal-btn">Social Progress</a>
+    <link rel="stylesheet" href="searchstyle.css" />
 
 </div>
+
+<script>
+ document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
+    });
+ </script>
 
 
 </body>

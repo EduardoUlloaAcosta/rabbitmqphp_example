@@ -294,7 +294,9 @@ function handlePostReview($data){
 
         $stmt = $db->prepare("INSERT INTO reviews (user_id, meal_id, rating, review_text)
         VALUES (?, ?, ?, ?)
+
         ON DUPLICATE KEY UPDATE rating = VALUES(rating), review_text = VALUES(review_text)"); //fix reviews duplicate error that crashes rabbitmq 3/4/26 brian
+
         $stmt->bind_param("iiis", $user_id, $meal_id, $rating, $review_text);
 
         if($stmt->execute()){
@@ -622,4 +624,73 @@ function handleGetUserDiet($data) { //stefan and brian worked on together
     return ['success' => true, 'diet_name' => $row['diet_name'] ?? ''];
 }
 
+//4/13/26 brian. Adding a function to create custom meals
+function CustomMealMaker($data) {
+    $user_id = $data['user_id'] ?? null;
+    $name = $data['name'] ?? null;
+    $category = $data['category'] ?? null;
+    $area = $data['area'] ?? null;
+    $instructions = $data['instructions'] ?? null;
+    $ingredients = $data['ingredients'] ?? null;
+    $calories = $data['calories'] ?? null;
+    $image_url = $data['image_url'] ?? null;
+
+    if (!$user_id || !$name || !$category || !$area || !$instructions || !$ingredients || !$calories) { //check for empty fields because I don't want errors
+        return ['success' => false, 'message' => 'one or more field left empty'];
+    }
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'db connection failed'];
+    }
+
+    $stmt = $db->prepare("insert into meals (is_api, created_by, name, category, area, instructions, ingredients, image_url, calories) values (0, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("issssssd", $user_id, $name, $category, $area, $instructions, $ingredients, $image_url, $calories);
+
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $db->close();
+        return ['succes' => true, 'message' => 'meal added'];
+    } else {
+        $stmt->close();
+        $db->close();
+        return ['succes' => false, 'mesage' => 'failed to add'];
+    }
+
+
+}
+//function to get stats for journey page - Added by Ben
+function handleSearchUser($data) {
+    $username = $data['query'] ?? '';
+    var_dump($data);
+    if (empty($username)) {
+        return ['success' => false, 'message' => 'No search query provided'];
+    }
+    echo "Searching database for: $username\n";
+
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_error) {
+        return ['success' => false, 'message' => 'Database connection failed: ' . $db->connect_error];
+    }
+//was doing where is name = before swapped it -Stefan
+    $searchTerm = '%' . $username . '%';
+    $stmt = $db->prepare("select username, current_weight, goal_weight, height from users where username LIKE ?");
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile= $result->fetch_assoc();
+    $stmt->close();
+    $db->close();
+
+    if (!$profile) {
+        return ['success' => false, 'message' => 'no user found: '];
+    }
+
+    return ['success' => true, 'profile' => $profile];
+}
+
+
+//im not team leader - ainesh (5/8/2026)
+//mostly putting this as a comment so i can make a commit to clarify that the last two merges and commits were done by AINESH! they showed up on brian's account on github lol..
 ?>
