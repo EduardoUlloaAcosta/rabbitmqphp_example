@@ -35,10 +35,24 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
         }
     }
 }
+
+
+// meal recommendation logic/ Brian Patoilo 3/4/26
+$recommendations = [];
+$recResponse = sendRequest([
+    'type' => 'get_recommendations',
+    'user_id' => $_SESSION['user_id'],
+    'plan_date' => $plan_date
+]);
+if ($recResponse && $recResponse['success'] && !empty($recResponse['meals'])) {
+    $recommendations = $recResponse['meals'];
+}
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name ="viewport" content ="width=device-width, initial-scale=1.0">
     <title>My Dashboard</title>
     <link rel="stylesheet" href="dashboard.css" />
     <link rel="stylesheet" href="global.css" />
@@ -53,10 +67,13 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
             </div>
             <ul class="nav-links">
                 <li><a href="search.php">Home</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="calorieTracker.html">Calorie Tracker</a></li>
+                <li><a href="userPage.php">Profile</a></li>
+                <li><a href="calorietrackerPage.php">Calorie Tracker</a></li>
                 <li><a href="dashboard.php">Dashboard</a></li>
             </ul>
+            <div class="mobile-menu-button">
+                <span></span><span></span><span></span>
+            </div>
             <div class="logout-btn">
                 <a href="logout.php">Logout</a>
             </div>
@@ -72,7 +89,21 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
         <p class="history-label">Viewing: <?= date('F j, Y', strtotime($plan_date)) ?></p>
     <?php endif; ?>
 
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
     <p class="calorie-total">Total Calories: <strong><?= $totalCalories ?> cal</strong></p>
+
+    <?php if (!empty($recommendations)): ?> <!-- displays meals recommendations in the top right -->
+            <div class="recommendations">
+                <strong>Recommended for You</strong>
+                <ul>
+                    <?php foreach ($recommendations as $rec): ?>
+                        <li><a href="mealDetails.php?id=<?= $rec['id'] ?>"><?= htmlspecialchars($rec['name']) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    </div>
+
 
     <div class="grid">
         <div class="box1">
@@ -153,6 +184,11 @@ if ($dashResponse && $dashResponse['success'] && !empty($dashResponse['meals']))
     const dateInput = document.getElementById('dashboard-date');
     dateInput.addEventListener('change', function() {
         window.location.href = 'dashboard.php?date=' + this.value;
+    });
+</script>
+<script> //stefan - javascript for navlinks for mobile menu (if u see this ill buy the whole group pizza from dominos)
+    document.querySelector('.mobile-menu-button').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('open');
     });
 </script>
 </body>

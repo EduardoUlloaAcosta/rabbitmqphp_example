@@ -50,8 +50,8 @@ $msg = new AMQPMessage($testMessage, [
 ]);
 
 $channel->basic_publish($msg, '', QUEUE_NAME);
-echo " [x] Sent: $testMessage\n";
-echo " [x] Waiting for response...\n";
+echo " Sent: $testMessage\n";
+echo " Waiting for response...\n";
 
 // Wait up to 5 seconds for a reply
 $timeout = time() + 5;
@@ -60,9 +60,9 @@ while ($response === null && time() < $timeout) {
 }
 
 if ($response) {
-    echo " [x] Got response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";
+    echo " Got response: " . json_encode($response, JSON_PRETTY_PRINT) . "\n";
 } else {
-    echo " [!] No response received (timeout)\n";
+    echo " No response received (timeout)\n";
 }
 
 $channel->close();

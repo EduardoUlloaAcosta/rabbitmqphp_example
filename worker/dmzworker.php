@@ -1,4 +1,5 @@
 <?php
+//created by ainesh in february
 require_once(__DIR__ . '/vendor/autoload.php'); // need for api key to read from .env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -21,10 +22,10 @@ function handleRequest($request)
         return ["status" => "error", "message" => "missing type"];
     }
 
-    //this part is for searching meals
-    if ($request['type'] === "search_meal"){
+    //this part is for searching meals from the mealdb
+    if ($request['type'] === "search_meal_by_letter"){
 
-        $query = $request['query'] ?? "chicken"; //chicken is default
+        $query = $request['query'] ?? "chicken"; //chicken set as default
 
         $url = "https://www.themealdb.com/api/json/v1/1/search.php?s=" . urlencode($query);
         $json = file_get_contents($url);
@@ -43,10 +44,11 @@ function handleRequest($request)
         ];
 
     }
-
+    //fdc search - used to grab calorie information
+    //this was so complicated lol
     elseif ($request['type'] === "fdc_search"){
 
-        $query = $request['query'] ?? "apple"; //apple is default
+        $query = $request['query'] ?? "apple"; //apple set as default
 
         $fdcKey = $_ENV['USDA_FOODCHART_API_KEY'];
 
@@ -56,17 +58,17 @@ function handleRequest($request)
 
         $url = "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=" . urlencode($fdcKey)
             . "&query=" . urlencode($query)
-            . "&pageSize=1";
+            . "&pageSize=1"; //i did this since fdc returns up to 50 results. just wanted the first result
 
         $context = stream_context_create([
             'http' => [
                 'timeout' => 10
-            ]
+            ] //10 second timeout to avoid hanging
         ]);
 
         $json = file_get_contents($url, false, $context);
         if ($json === false){
-            $err = error_get_last();
+            $err = error_get_last(); //done to retrieve error in case of fail
             return["status" => "error", "message" => "fdc fetch failed", "error" => $err['message']];
         }
 
@@ -76,14 +78,14 @@ function handleRequest($request)
             return ["status" => "error", "message" => "fdc gave bad json :c"];
         }
 
-        $kcal = null;
-        $food = $fdcData["foods"][0] ?? null;
+        $kcal = null; //set this to null in case a a match isn't found. this way loop just returns null in that case
+        $food = $fdcData["foods"][0] ?? null; //[0] is there to grab first and only result
 
         if ($food && isset($food["foodNutrients"]) && is_array($food["foodNutrients"])){
             foreach ($food["foodNutrients"] as $n){
                 $name = $n["nutrientName"] ?? "";
                 $unit = $n["unitName"] ?? "";
-                if(strtolower($name) === "energy" && strtoupper($unit) === "KCAL"){
+                if(strtolower($name) === "energy" && strtoupper($unit) === "KCAL"){ //fdc api returns energy in kcal and kj. checki name and unit to get right one
                     $kcal = $n["value"] ?? null;
                     break;
                 }
@@ -107,5 +109,5 @@ function handleRequest($request)
     return ["status" => "error", "message" => "unknown request type"];
 }
 
-$worker-> process_requests("handleRequest");
+$worker-> process_requests("handleRequest"); //listening loop
 ?>
