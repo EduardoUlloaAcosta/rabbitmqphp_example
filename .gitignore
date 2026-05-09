@@ -3,3 +3,4 @@ worker/.env
 .env
 *.env
 *.ini
+*.kate-swp

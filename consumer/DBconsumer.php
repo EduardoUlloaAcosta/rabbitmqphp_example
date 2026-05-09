@@ -74,7 +74,6 @@ $callback = function ($msg) {
                 break;
 
 
-
             // add cases here when make more features
 			//example cases
             // case 'get_profile':
@@ -92,12 +91,27 @@ $callback = function ($msg) {
 			case 'get_user_diet': //added to get diet
 			    $response = handleGetUserDiet($data);
 			    break;
+            //type case for user search -  Added by Ben
+            case 'search_user_stats':
+                $response = handleSearchUser($data);
+				break;
 			case 'update_user_diet':
 			    $response = handleUpdateUserDiet($data);
 			    break;
 			case 'delete_user_diet':
 			    $response = handleDeleteUserDiet($data);
 			    break;
+            //added on 4/10/2026 by ainesh, 'db_replicate' case
+            case 'db_replicate': //cronjob on hot standby will call this for db dump
+                $dump = shell_exec('mysqldump -u testUser -p123 meal_planner');
+                //echo "dump result: " . ($dump ? "got data" : "empty/null") . "\n";
+                //this was debug code bc dbreplicate kept crying about sql syntax when i used the constants. so i just hardcoded the username and password and its working now that way. dunno why it was crying before lol
+                if ($dump){
+                    $response = ['success' => true, 'dump' => $dump];
+                } else {
+                    $response = ['success' => false, 'message' => 'dump failed :c'];
+                }
+                break;
 
                 //added on 4/10/2026 by ainesh, 'db_replicate' case
             case 'db_replicate': //cronjob on hot standby will call this for db dump
@@ -121,6 +135,7 @@ $callback = function ($msg) {
     }
 
     if($type != 'db_replicate'){
+
         echo "Response: " . json_encode($response) . "\n\n";
     }
 

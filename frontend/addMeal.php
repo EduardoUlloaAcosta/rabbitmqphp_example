@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
     <title>Add Custom Meal</title>
+    <meta name ="viewport" content ="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="searchstyle.css" />
     <link rel="stylesheet" href="global.css" />
 </head>

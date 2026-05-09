@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name ="viewport" content ="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="searchstyle.css" />
     <link rel="stylesheet" href="global.css" />
 </head>
@@ -50,16 +51,25 @@ if (!isset($_SESSION['user_id'])) {
     <a href="addMeal.php" class="add-meal-btn">Dont see what you need? Add custom meal</a>
     <link rel="stylesheet" href="searchstyle.css" />
 </div>
+
+<!-- need to add a button that navs to journey.php Stefan 4/20 -->
+<div class="progress-jrny-btn">
+<a href = "userjourneyPage.php" class= "jrny-button">Social Journeys (I know its ugly)</a>
+</div>
+
+
 <!-- 2/23 added by ainesh, changed on 2/25 by ainesh -->
 <div class="mealsGrid">
   <?php
   require_once __DIR__ . '/rabbitmq_helper.php';
     $query = $_GET['query'] ?? '';
+    //searches by query if user types something in, load all meals by default otherwise
     if(!empty($query)){
         $response = sendRequest(['type' => 'search_meal', 'query' => $query]);
     } else {
         $response = sendRequest(['type' => 'get_meals']);
     }
+    //making a 'card' for every meal
   if ($response && $response['success'] && !empty($response['meals'])){
     foreach ($response['meals'] as $meal){
       echo '<div class="mealCard">';
